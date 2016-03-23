@@ -127,7 +127,7 @@ public class TestVariable {
 
     @Test
     public void TestVariable_initCodeWithChar_InsertsPrefixAndWrapsChar() {
-        Variable tested = new Variable("a", "char", "'a'");
+        Variable tested = new Variable("a", "char", "a");
 
         assertEquals(tested.getInitCode(), "char FV_a = 'a';");
     }

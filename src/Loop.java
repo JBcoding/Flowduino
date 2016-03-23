@@ -2,15 +2,10 @@ public abstract class Loop implements IComponent {
     protected Node headOfContent;
 
     public void setHeadOfContent(Node headOfContent) {
-
+        this.headOfContent = headOfContent;
     }
 
     public Node getHeadOfContent() {
-        return null;
-    }
-
-    @Override
-    public String toCode(int tabDepth) {
-        return null;
+        return headOfContent;
     }
 }

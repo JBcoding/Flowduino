@@ -37,21 +37,21 @@ public class TestIfComponent {
 
     @Test
     public void TestIfComponent_ToCodeOneIf_CodeIsFormatted() {
-        assertEquals(ifComponent1.toCode(2), "  if (i == 6) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
+        assertEquals(ifComponent1.toCode(2), "  if ((FV_i) == (5)) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
     }
 
     @Test
     public void TestIfComponent_ToCodeOneIfAndOneElseIf_CodeIsFormatted() {
-        assertEquals(ifComponent2.toCode(2), "  if (i == 6) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  } else if (i == 6) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
+        assertEquals(ifComponent2.toCode(2), "  if ((FV_i) == (5)) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  } else if ((FV_i) == (6)) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
     }
 
     @Test
     public void TestIfComponent_ToCodeOneIfAndOneElse_CodeIsFormatted() {
-        assertEquals(ifComponent3.toCode(2), "  if (i == 6) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  } else {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
+        assertEquals(ifComponent3.toCode(2), "  if ((FV_i) == (5)) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  } else {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
     }
 
     @Test
     public void TestIfComponent_ToCodeOneIfAndOneElseIfAndOneElse_CodeIsFormatted() {
-        assertEquals(ifComponent4.toCode(2), "  if (i == 6) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  } else if (i == 6) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  } else {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
+        assertEquals(ifComponent4.toCode(2), "  if ((FV_i) == (5)) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  } else if ((FV_i) == (6)) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  } else {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
     }
 }

@@ -58,16 +58,16 @@ public class TestDelayComponent {
 
         delay.setDelayMicroseconds(4050);
 
-        assertEquals(delay.toCode(2), "  delay(4);\n  delayMicroseconds(50)");
+        assertEquals(delay.toCode(2), "  delay(4);\n  delayMicroseconds(50);");
     }
 
     @Test
     public void TestDelay_MicroSecondsToCode_ConvertsToMixDelaysInLoop() {
         DelayComponent delay = new DelayComponent();
 
-        delay.setDelayMicroseconds(17179871186L);
+        delay.setDelayMicroseconds(17179869182006L);
 
-        assertEquals(delay.toCode(2), "  delay(4294967295);\n  delay(4294967295);\n  delay(4294967295);\n  delay(4294967295);\n  delay(2);\n  delayMicroseconds(6)");
+        assertEquals(delay.toCode(2), "  delay(4294967295);\n  delay(4294967295);\n  delay(4294967295);\n  delay(4294967295);\n  delay(2);\n  delayMicroseconds(6);");
     }
 
     @Test

@@ -7,41 +7,74 @@ public class Variable implements IValues {
     protected String type;
     protected String startValue;
 
-    public Variable(String name, String type) {}
-    public Variable(String name, String type, String startValue) {}
-
-    public String getName() {
-        return null;
+    public Variable(String name, String type) throws IllegalArgumentException {
+        if (name == null) {
+            throw new IllegalArgumentException("Name cannot be null");
+        }
+        if (type == null) {
+            throw new IllegalArgumentException("Type cannot be null");
+        }
+        this.name = name;
+        this.type = type;
     }
 
-    public void setName(String name) {
+    public Variable(String name, String type, String startValue) throws IllegalArgumentException {
+        this(name, type);
+        if (startValue == null) {
+            throw new IllegalArgumentException("Value cannot be null");
+        }
+        if (startValue.equals("")) {
+            startValue = null;
+        }
+        this.startValue = startValue;
+    }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) throws IllegalArgumentException { 
+        if (name == null) {
+            throw new IllegalArgumentException("Name cannot be null");
+        }
+        this.name = name;
     }
 
     public String getType() {
-        return null;
+        return type;
     }
 
-    public void setType(String type) {
-
+    public void setType(String type) throws IllegalArgumentException {
+        if (type == null) {
+            throw new IllegalArgumentException("Type cannot be null");
+        }
+        this.type = type;
     }
 
     public String getStartValue() {
-        return null;
+        return startValue;
     }
 
     public void setStartValue(String startValue) {
-
+        this.startValue = startValue;
     }
 
 
 
     @Override
     public String toCode() {
-        return null;
+        return "FV_" + name;
     }
 
     public String getInitCode() {
-        return null;
+        if (startValue == null) {
+            return type + " FV_" + name + ";";
+        }
+        if (type.equals("string")) {
+            return type + " FV_" + name + " = \"" + startValue + "\";";
+        } else if (type.equals("char")) {
+            return type + " FV_" + name + " = '" + startValue + "';";
+        }
+        return type + " FV_" + name + " = " + startValue + ";";
     }
 }

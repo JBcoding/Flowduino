@@ -48,6 +48,6 @@ public class TestWhileLoop {
     @Test
     public void TestWhileLoop_ToCode_CodeIsFormatted() {
         whileLoop.setHeadOfContent(head);
-        assertEquals(whileLoop.toCode(2), "  while (i == 5) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
+        assertEquals(whileLoop.toCode(2), "  while ((FV_i) == (5)) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
     }
 }

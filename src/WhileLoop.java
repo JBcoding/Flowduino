@@ -3,19 +3,24 @@ public class WhileLoop extends Loop {
     protected ICase condition;
 
     public WhileLoop(ICase condition) {
-
+        this.condition = condition;
     }
 
     public ICase getCondition() {
-        return null;
+        return condition;
     }
 
     public void setCondition(ICase condition) {
-
+        this.condition = condition;
     }
 
     @Override
     public String toCode(int tabDepth) {
-        return null;
+        String code = "";
+        String tab = Settings.getTabString(tabDepth);
+        code = tab + "while (" + condition.toCode() + ") {\n";
+        code += headOfContent.getProgramCode(tabDepth + Settings.getTabDepth());
+        code += "\n" + tab + "}";
+        return code;
     }
 }

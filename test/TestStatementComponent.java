@@ -63,7 +63,7 @@ public class TestStatementComponent {
         String input = "i ++";
         statement.setValue(input);
 
-        assertEquals(statement.toCode(2), "  FV_i ++");
+        assertEquals(statement.toCode(2), "  FV_i ++;");
     }
 
     @Test
@@ -73,7 +73,17 @@ public class TestStatementComponent {
         String input = "i ++\nj ++\nk ++";
         statement.setValue(input);
 
-        assertEquals(statement.toCode(2), "  FV_i ++\n  FV_j ++\n  FV_k ++");
+        assertEquals(statement.toCode(2), "  FV_i ++;\n  FV_j ++;\n  FV_k ++;");
+    }
+
+    @Test
+    public void testStatement_GetCodeMultiLine_ReturnTabbedIndexedCodeWithString() {
+        StatementComponent statement = new StatementComponent();
+
+        String input = "stringI = \"stringI\"";
+        statement.setValue(input);
+
+        assertEquals(statement.toCode(2), "  FV_stringI = \"stringI\";");
     }
 
 

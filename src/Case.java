@@ -4,23 +4,25 @@ public class Case implements ICase {
     protected String operator;
 
     public Case(ICase leftSide, ICase rightSide, String operator) {
-
+        this.leftSide = leftSide;
+        this.rightSide = rightSide;
+        this.operator = operator;
     }
 
     public ICase getLeftSide() {
-        return null;
+        return leftSide;
     }
 
     public ICase getRightSide() {
-        return null;
+        return rightSide;
     }
 
-    public ICase getOperator() {
-        return null;
+    public String getOperator() {
+        return operator;
     }
 
     @Override
     public String toCode() {
-        return null;
+        return "(" + leftSide.toCode() + ") " + operator + " (" + rightSide.toCode() + ")";
     }
 }

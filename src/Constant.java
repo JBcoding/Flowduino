@@ -5,10 +5,17 @@ public class Constant implements IValues {
 
     protected String value;
 
-    public Constant(Object value) {}
+    public Constant(Object value) throws IllegalArgumentException {
+        if (value == null) {
+            throw new IllegalArgumentException("Argument must not be null");
+        } else if (value.toString() == "") {
+            throw new IllegalArgumentException("Argument must not be empty");
+        }
+        this.value = value.toString();
+    }
 
     @Override
     public String toCode() {
-        return null;
+        return value;
     }
 }
