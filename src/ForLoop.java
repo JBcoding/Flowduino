@@ -15,7 +15,7 @@ public class ForLoop extends Loop {
 
     }
 
-    public ForLoop(Variable counter, IValues startValue,IValues endValue, IValues step) {
+    public ForLoop(Variable counter, IValues startValue, IValues endValue, IValues step) {
 
     }
 

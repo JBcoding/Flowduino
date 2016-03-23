@@ -1,6 +1,3 @@
-/**
- * Created by mathias on 23/03/16.
- */
-public interface IValues {
+public interface IValues extends ICase {
     String toCode();
 }
