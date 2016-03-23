@@ -1,0 +1,30 @@
+LED
+    [imports]
+        led.h
+    [title]
+        LED at {pin} {function}
+    [variables]
+        int pin
+    [power]
+        5V
+        GND
+    [constructor]
+        PinMode({pin}, output)
+    [functions]
+        TurnOn 
+            [description]
+                Tænder LED
+            [call]
+                digitalWrite({pin}, HIGH)
+        TurnOff
+            [description]
+                Slukker LED
+            [call]
+                digitalWrite({pin}, LOW)
+        IsOn
+            [description]
+                IsLedOn
+            [return]
+                bool status
+            [call]
+                digitalRead({pin})

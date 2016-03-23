@@ -1,0 +1,29 @@
+Servo
+    [imports]
+        Servo.h
+    [title]
+        {name} {function}
+    [variables]
+        String name
+        int pin
+    [constructor]
+        Servo {name} = Servo({pin})
+    [power]
+        5V
+        GND
+    [functions]
+        SetPos
+            [description]
+                Sætter position
+            [parameters]
+                int position
+            [call]
+                {name}.write({0})
+        GetPos
+            [description]
+                Giver position
+            [return]
+                int position
+            [call]
+                {name}.read()
+

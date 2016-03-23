@@ -2,6 +2,26 @@ import java.util.*;
 
 public class Flowduino {
     public static void main(String[] args) {
+        Peripheral led = new Peripheral("Blocks/LED.fd");
+        GenericPeripheral b = new GenericPeripheral(led);
+        b.updateValueAtKey("pin", "14");
+        System.out.println(b.initCode());
+        System.out.println(b.createFunctionCall(led.getFunctions().get(0), new ArrayList<Variable>()));
+        System.out.println(b.createFunctionCall(led.getFunctions().get(1), new ArrayList<Variable>()));
+        System.out.println(b.createFunctionCall(led.getFunctions().get(2), new ArrayList<Variable>()));
+
+        System.out.println();
+
+        Peripheral servo = new Peripheral("Blocks/Servo.fd");
+        GenericPeripheral c = new GenericPeripheral(servo);
+        c.updateValueAtKey("pin", "14");
+        c.updateValueAtKey("name", "Servo1");
+        System.out.println(c.initCode());
+        System.out.println(c.createFunctionCall(servo.getFunctions().get(0), new ArrayList<Variable>(){{add(new Variable("i", "int"));}}));
+        System.out.println(c.createFunctionCall(servo.getFunctions().get(1), new ArrayList<Variable>()));
+
+        System.out.println();
+
         List<Variable> variables = new ArrayList<Variable>() {{add(new Variable("i", "int", "0")); add(new Variable("g", "string", "hej")); add(new Variable("b", "float"));}};
 
         ForLoop forLoop = new ForLoop(variables.get(2), new Constant(4), new Constant(80), new Constant(.4));
