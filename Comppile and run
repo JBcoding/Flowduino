@@ -1,0 +1,8 @@
+COMPILE SRC:
+    javac -d bin/ -cp src src/dtu/library/app/*.java
+
+COMPILE TESTS:
+    javac -cp junit-4.12.jar:src -d bin/ test/dtu/library/app/*.java
+
+RUN TESTS:
+    java -cp test:bin:junit-4.12.jar:hamcrest-core-1.3.jar org.junit.runner.JUnitCore dtu.library.app.TestAddBook dtu.library.app.TestSearchBook dtu.library.app.TestRegisterUser dtu.library.app.TestBorrowBook dtu.library.app.TestReturnBook
