@@ -83,4 +83,28 @@ public class TestNode {
         assertEquals(tested.getComponent(), statement);
 
     }
+
+    @Test
+    public void testNode_getProgramCodeWithStatements_ReturnsStatements() {
+        Node program = new Node();
+        DelayComponent delay = new DelayComponent();
+        delay.setDelaySeconds(4);
+
+        program.setComponent(delay);
+
+        assertEquals(program.getProgramCode(2), delay.toCode(2));
+    }
+
+    @Test
+    public void testNode_getProgramCodeWithMultipleStatements_ReturnsMultipleStatements() {
+        DelayComponent delay1 = new DelayComponent();
+        DelayComponent delay2 = new DelayComponent();
+        delay1.setDelayMilliseconds(3);
+        delay2.setDelayMilliseconds(5);
+
+        Node tail = new Node(delay2);
+        Node head = new Node(delay1, tail);
+
+        assertEquals(head.getProgramCode(2), delay1.toCode(2) + "\n\n\n\n\n" + delay2.toCode(2));
+    }
 }

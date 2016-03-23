@@ -5,14 +5,35 @@ import static org.junit.Assert.*;
  */
 public class TestStatementComponent {
 
+
     @Test
     public void testStatement_SetterAndGetterValue_SetsAndGetsValue() {
         StatementComponent statement = new StatementComponent();
 
-        String input = "if (æøå < 23) {a = 5}\n + 4";
+        String input = "i = 4 + 3\nj = 4 + i";
         statement.setValue(input);
 
         assertEquals(statement.getValue(), input);
+    }
+
+    @Test
+    public void testStatement_NoPrefixesSingleLine_InsertsPrefixes() {
+        StatementComponent statement = new StatementComponent();
+
+        String input = "i ++";
+        statement.setValue(input);
+
+        assertEquals(statement.toCode(0), "FV_i ++;");
+    }
+
+    @Test
+    public void testStatement_NoPrefixesMultiLine_InsertsPrefixes() {
+        StatementComponent statement = new StatementComponent();
+
+        String input = "i ++\nj ++\nk ++";
+        statement.setValue(input);
+
+        assertEquals(statement.toCode(0), "FV_i ++;\nFV_j ++;\nFV_k ++;");
     }
 
     @Test
@@ -22,7 +43,7 @@ public class TestStatementComponent {
         String input = "i ++";
         statement.setValue(input);
 
-        assertEquals(statement.toCode(0), "i ++;");
+        assertEquals(statement.toCode(0), "FV_i ++;");
     }
 
     @Test
@@ -32,7 +53,7 @@ public class TestStatementComponent {
         String input = "i ++\nj++";
         statement.setValue(input);
 
-        assertEquals(statement.toCode(0), "i ++;\nj++;");
+        assertEquals(statement.toCode(0), "FV_i ++;\nFV_j++;");
     }
 
     @Test
@@ -42,7 +63,7 @@ public class TestStatementComponent {
         String input = "i ++";
         statement.setValue(input);
 
-        assertEquals(statement.toCode(2), "  i ++");
+        assertEquals(statement.toCode(2), "  FV_i ++");
     }
 
     @Test
@@ -52,7 +73,9 @@ public class TestStatementComponent {
         String input = "i ++\nj ++\nk ++";
         statement.setValue(input);
 
-        assertEquals(statement.toCode(2), "  i ++\n  j ++\n  k ++");
+        assertEquals(statement.toCode(2), "  FV_i ++\n  FV_j ++\n  FV_k ++");
     }
+
+
 
 }

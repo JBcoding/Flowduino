@@ -33,4 +33,6 @@ public class Node {
         return null;
     }
 
+    public String getProgramCode(int tabDepth) {return null;}
+
 }
