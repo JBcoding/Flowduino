@@ -86,6 +86,17 @@ public class TestStatementComponent {
         assertEquals(statement.toCode(2), "  FV_stringI = \"stringI\";");
     }
 
+    @Test
+    public void testStatement_GetCodeMultiLine_ReturnTabbedIndexedCodeWithMultipleSameNameVariable() {
+        StatementComponent statement = new StatementComponent();
+
+        String input = "i = sqrt(b)\ni = pow(i, 3)";
+        statement.setValue(input);
+
+        assertEquals(statement.toCode(2), "  FV_i = sqrt(FV_b);\n  FV_i = pow(FV_i, 3);");
+    }
+
+
 
 
 }

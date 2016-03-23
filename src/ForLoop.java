@@ -70,7 +70,7 @@ public class ForLoop extends Loop {
     public String toCode(int tabDepth) {
         String code = "";
         String tab = Settings.getTabString(tabDepth);
-        code = tab + "for (" + counter.getName() + " = " + startValue.toCode() + "; " + counter.getName() + " < " + endValue.toCode() + "; " + counter.getName() + " += " + step.toCode() + ") {\n";
+        code = tab + "for (" + counter.toCode() + " = " + startValue.toCode() + "; " + counter.toCode() + " < " + endValue.toCode() + "; " + counter.toCode() + " += " + step.toCode() + ") {\n";
         code += headOfContent.getProgramCode(tabDepth + Settings.getTabDepth());
         code += "\n" + tab + "}";
         return code;

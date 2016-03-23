@@ -237,6 +237,6 @@ public class TestForLoop {
     public void TestForLoop_ToCode_CodeIsFormatted() {
         ForLoop forLoop = new ForLoop(counter, startValue, endValue, stepValue);
         forLoop.setHeadOfContent(head);
-        assertEquals(forLoop.toCode(2), "  for (i = 4; i < 40; i += 2) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
+        assertEquals(forLoop.toCode(2), "  for (FV_i = 4; FV_i < 40; FV_i += 2) {\n" + head.getProgramCode(2 + Settings.getTabDepth()) + "\n  }");
     }
 }

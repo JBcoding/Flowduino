@@ -1,8 +1,13 @@
-/**
- * Created by mathias on 23/03/16.
- */
+import java.util.*;
+
 public class StatementComponent implements IComponent{
     String value;
+
+    public StatementComponent() {}
+
+    public StatementComponent(String value) {
+        this.value = value;
+    }
 
     public String getValue() {
         return value;
@@ -27,14 +32,19 @@ public class StatementComponent implements IComponent{
         valueCopy = valueCopy.replace("/", " ");
         valueCopy = valueCopy.replace("%", " ");
         valueCopy = valueCopy.replace("=", " ");
+        valueCopy = valueCopy.replace(".", " ");
+        valueCopy = valueCopy.replace(",", " ");
         valueCopy = valueCopy.replace("\n", " ");
+        valueCopy += " ";
+        valueCopy = valueCopy.replaceAll("-?\\d+", " ");
         while (valueCopy.indexOf("  ") != -1) {
             valueCopy = valueCopy.replace("  ", " ");
         }
-        String[] variabels = valueCopy.split(" ");
+        String[] variabelsArray = valueCopy.split(" ");
+        Set<String> variabels = new HashSet<String>(Arrays.asList(variabelsArray));
         valueCopy = new String(value);
-        for (int i = 0; i < variabels.length; i ++) {
-            valueCopy = valueCopy.replaceAll(variabels[i] + "(?=([^\"']*[\"'][^\"']*[\"'])*[^\"']*$)", "FV_" + variabels[i]);
+        for (String s : variabels) {
+            valueCopy = valueCopy.replaceAll(s + "(?=([^\"']*[\"'][^\"']*[\"'])*[^\"']*$)", "FV_" + s);
         }
         String[] lines = valueCopy.split("\n");
         String code = "";
