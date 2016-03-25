@@ -20,9 +20,11 @@ import javafx.beans.property.*;
 import javafx.beans.*;
 import javafx.beans.value.*;
 
-import java.awt.*;
+import java.awt.Point;
 import java.nio.BufferUnderflowException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Demonstrates a drag-and-drop feature.
@@ -120,6 +122,8 @@ public class Flowduino extends Application {
 
     public Rectangle insertDropTargetAtPosWithSize(int x, int y, int width, int height) {
         final Rectangle target = new Rectangle(x, y, width, height);
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
 
         target.setOnDragOver(new EventHandler <DragEvent>() {
             public void handle(DragEvent event) {
@@ -188,6 +192,14 @@ public class Flowduino extends Application {
                     ForLoop forLoop = new ForLoop(new Variable("i", "int"), new Constant("0"), new Constant("4"), new Constant("1"));
                     forLoop.setHeadOfContent(new Node());
                     newComponent = forLoop;
+                } else if (db.getString().equals("Commonly used - If")) {
+                    List<Node> nodes = new ArrayList<>();
+                    nodes.add(new Node());
+                    nodes.add(new Node());
+                    List<ICase> cases = new ArrayList<>();
+                    cases.add(new Case(new Variable("i", "int"), new Constant(4), ">="));
+                    IfComponent ifComponent = new IfComponent(nodes, cases);
+                    newComponent = ifComponent;
                 }
                 if (b) {
                     Node newNode = new Node(n.getComponent(), n.getNext());
@@ -224,9 +236,10 @@ public class Flowduino extends Application {
         maxX = 0;
         maxY = 0;
         createProgramViewFromNodeRecursively(n, 25, 100, true);
+        updateProgramViewSize();
 
         System.out.println("----------------------------");
-        System.out.println(n.getProgramCode(0));
+        //System.out.println(n.getProgramCode(0));
         System.out.println("----------------------------");
     }
 
@@ -239,17 +252,8 @@ public class Flowduino extends Application {
             targetFirstMap.put(r, true);
         }
         if (n.getComponent() == null) {
-            double newHeight = Math.max(maxY + 75, scrollPane.getHeight() - 2);
-            programView.setMinHeight(newHeight);
-            if (newHeight > scrollPane.getHeight()) {
-                programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth() - 12));
-            } else {
-                programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth() - 2));
-            }
             return new Point(x, y);
         }
-        maxX = Math.max(maxX, x);
-        maxY = Math.max(maxY, y);
         if (n.getComponent().getClass() == DelayComponent.class) {
             // draw delay
         } else if (n.getComponent().getClass() == BreakComponent.class) {
@@ -261,11 +265,17 @@ public class Flowduino extends Application {
             // draw extra targets
             Loop loop = (Loop)n.getComponent();
             Point loopSize = createProgramViewFromNodeRecursively(loop.getHeadOfContent(), x, y + 75, true);
-            x = loopSize.x;
             y = loopSize.y;
         } else if (n.getComponent().getClass() == IfComponent.class) {
             // draw if
-
+            IfComponent ifComponent = (IfComponent)n.getComponent();
+            Point ifSize = new Point(x, y);
+            for (Node ifNode : ifComponent.getHeadOfContents()) {
+                Point ifNodeSize = createProgramViewFromNodeRecursively(ifNode, ifSize.x, y + 75, true);
+                ifSize.x = Math.max(ifNodeSize.x + 75, ifSize.x);
+                ifSize.y = Math.max(ifNodeSize.y, ifSize.y);
+            }
+            y = ifSize.y;
         }
         // make target for after
         Rectangle r = insertDropTargetAtPosWithSize(x, y, 50, 50);
@@ -277,6 +287,17 @@ public class Flowduino extends Application {
             y = temp.y;
         }
         return new Point(x, y);
+    }
+
+    public void updateProgramViewSize() {
+        double newHeight = Math.max(maxY + 75, scrollPane.getHeight() - 2);
+        programView.setMinHeight(newHeight);
+        System.out.println(newHeight + " - " + scrollPane.getHeight() + " - " + (maxY + 75));
+        if (newHeight > scrollPane.getHeight() - 2) {
+            programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth() - 14));
+        } else {
+            programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth() - 2));
+        }
     }
 
     public TreeView<String> treeViewFromDocument(Document d) {
