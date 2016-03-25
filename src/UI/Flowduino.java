@@ -31,6 +31,8 @@ public class Flowduino extends Application {
     protected Document d = new Document();
     protected Button saveButton;
     protected IconMenu topBar;
+    protected Pane programView;
+    protected ScrollPane scrollPane;
 
     protected HashMap<Rectangle, Node> targetNodeMap = new HashMap<>();
     protected HashMap<Rectangle, Boolean> targetFirstMap = new HashMap<>();
@@ -55,8 +57,11 @@ public class Flowduino extends Application {
         saveButton = new Button();
         saveButton.setId("save-button");
 
-        topBar = new IconMenu();
-        topBar.add(saveButton);
+        topBar = new IconMenu(saveButton);
+
+        programView = new Pane();
+        scrollPane = new ScrollPane();
+        scrollPane.setContent(programView);
 
 
         scene.heightProperty().addListener(new ChangeListener<Number>() {
@@ -64,6 +69,18 @@ public class Flowduino extends Application {
                 treeView.setPrefHeight(newSceneHeight.intValue() - buttonBox.getHeight() - topBar.getMenu().getHeight());
                 treeView.setTranslateY(buttonBox.getHeight() + topBar.getMenu().getHeight());
                 buttonBox.setTranslateY(topBar.getMenu().getHeight());
+                scrollPane.setTranslateY(topBar.getMenu().getHeight());
+                scrollPane.setMaxHeight(Math.max(1, newSceneHeight.doubleValue() - topBar.getMenu().getHeight()));
+                scrollPane.setMinHeight(Math.max(1, newSceneHeight.doubleValue() - topBar.getMenu().getHeight()));
+                scrollPane.setTranslateX(treeView.getWidth());
+            }
+        });
+        scene.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHWidth, Number newSceneWidth) {
+                topBar.getMenu().setMinWidth(newSceneWidth.doubleValue());
+                scrollPane.setTranslateX(treeView.getWidth());
+                scrollPane.setMaxWidth(Math.max(1, newSceneWidth.doubleValue() - treeView.getWidth()));
+                scrollPane.setMinWidth(Math.max(1, newSceneWidth.doubleValue() - treeView.getWidth()));
             }
         });
 
@@ -72,7 +89,8 @@ public class Flowduino extends Application {
         createProgramViewFromNode(d.getHead());
 
         stage.setScene(scene);
-        stage.setHeight(600);
+        stage.setHeight(601);
+        stage.setWidth(601);
         stage.show();
 
 
@@ -161,7 +179,7 @@ public class Flowduino extends Application {
             }
         });
 
-        root.getChildren().add(target);
+        programView.getChildren().add(target);
 
         return target;
     }
@@ -174,25 +192,35 @@ public class Flowduino extends Application {
             }
         }
         root.getChildren().clear();
+        programView.getChildren().clear();
         targetNodeMap = new HashMap<>();
         targetFirstMap = new HashMap<>();
         root.getChildren().add(treeView);
         root.getChildren().add(buttonBox);
-        root.getChildren().addAll(topBar.getMenu());
-        createProgramViewFromNodeRecursively(n, 300, 100, true);
+        root.getChildren().add(topBar.getMenu());
+        root.getChildren().add(scrollPane);
+        maxX = 0;
+        maxY = 0;
+        createProgramViewFromNodeRecursively(n, 25, 100, true);
 
         System.out.println("----------------------------");
         System.out.println(n.getProgramCode(0));
         System.out.println("----------------------------");
     }
 
+    private int maxX;
+    private int maxY;
     public void createProgramViewFromNodeRecursively(Node n, int x, int y, boolean first) {
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
         if (first) {
             Rectangle r = insertDropTargetAtPosWithSize(x, y - 75, 50, 50);
             targetNodeMap.put(r, n);
             targetFirstMap.put(r, true);
         }
         if (n.getComponent() == null) {
+            programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth()));
+            programView.setMinHeight(Math.max(maxY + 75, scrollPane.getHeight()));
             return;
         }
         if (n.getComponent().getClass() == DelayComponent.class) {

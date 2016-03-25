@@ -11,9 +11,12 @@ import java.util.List;
 public class IconMenu {
     HBox menu;
 
-    public IconMenu() {
+    public IconMenu(Button ... buttons) {
         menu = new HBox();
         menu.setId("icon-menu");
+        for (Button b : buttons) {
+            add(b);
+        }
     }
 
     public void add(Button b) {
@@ -29,7 +32,6 @@ public class IconMenu {
     }
 
     public HBox getMenu() {
-        System.out.println(menu.getChildren().get(0).getId());
         return menu;
     }
 }
