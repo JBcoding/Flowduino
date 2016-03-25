@@ -33,10 +33,13 @@ public class Node {
     }
 
     public String getProgramCode(int tabDepth) {
+        if (component == null) {
+            return "";
+        }
         if (next == null) {
             return component.toCode(tabDepth);
         } else {
-            return component.toCode(tabDepth) + "\n\n\n\n\n" + next.getProgramCode(tabDepth);
+            return component.toCode(tabDepth) + "\n\n" + next.getProgramCode(tabDepth);
         }
     }
 

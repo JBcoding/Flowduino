@@ -4,6 +4,6 @@
 public class BreakComponent implements IComponent {
     @Override
     public String toCode(int tabDepth) {
-        return "break;";
+        return Settings.getTabString(tabDepth) + "break;";
     }
 }

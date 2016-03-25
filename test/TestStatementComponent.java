@@ -12,7 +12,7 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_SetterAndGetterValue_SetsAndGetsValue() throws MalformedExpressionException {
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(null);
 
         String input = "i = 4 + 3\nj = 4 + i";
         statement.setValue(input);
@@ -22,7 +22,7 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_NoPrefixesSingleLine_InsertsPrefixes() throws MalformedExpressionException {
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(null);
 
         String input = "i ++";
         statement.setValue(input);
@@ -32,7 +32,7 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_NoPrefixesMultiLine_InsertsPrefixes() throws MalformedExpressionException {
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(null);
 
         String input = "i ++\nj ++\nk ++";
         statement.setValue(input);
@@ -42,7 +42,7 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_GetCodeSingleLine_InsertsSemicolon() throws MalformedExpressionException {
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(null);
 
         String input = "i ++";
         statement.setValue(input);
@@ -52,7 +52,7 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_GetCodeMultiLine_InsertsSemicolon() throws MalformedExpressionException {
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(null);
 
         String input = "i ++\nj++";
         statement.setValue(input);
@@ -62,7 +62,7 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_GetCodeSingleLine_ReturnTabbedIndexedCode() throws MalformedExpressionException {
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(null);
 
         String input = "i ++";
         statement.setValue(input);
@@ -72,7 +72,7 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_GetCodeMultiLine_ReturnTabbedIndexedCode() throws MalformedExpressionException {
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(null);
 
         String input = "i ++\nj ++\nk ++";
         statement.setValue(input);
@@ -82,7 +82,7 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_GetCodeMultiLine_ReturnTabbedIndexedCodeWithString() throws MalformedExpressionException {
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(null);
 
         String input = "stringI = \"stringI\"";
         statement.setValue(input);
@@ -92,7 +92,7 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_GetCodeMultiLine_ReturnTabbedIndexedCodeWithMultipleSameNameVariable() throws MalformedExpressionException {
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(null);
 
         String input = "i = sqrt(b)\ni = pow(i, 3)";
         statement.setValue(input);

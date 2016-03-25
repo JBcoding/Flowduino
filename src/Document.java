@@ -27,4 +27,12 @@ public class Document implements Serializable {
     public Node getHead() {
         return head;
     }
+
+    public void setHead(Node head) {
+        this.head = head;
+    }
+
+    public Variables getVariables() {
+        return variables;
+    }
 }

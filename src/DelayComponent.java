@@ -2,7 +2,7 @@
  * Created by mathias on 23/03/16.
  */
 public class DelayComponent implements IComponent {
-    protected long delayMicroseconds;
+    protected long delayMicroseconds = 1000;
 
     public long getDelayMicroseconds() {
         return delayMicroseconds;

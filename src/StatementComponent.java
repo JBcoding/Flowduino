@@ -1,10 +1,8 @@
 import java.util.*;
 
 public class StatementComponent implements IComponent{
-    String value;
+    String value = "";
     Variables variables;
-
-    public StatementComponent() {}
 
     public StatementComponent(Variables variables) {
         this.variables = variables;

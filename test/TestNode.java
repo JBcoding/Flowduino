@@ -21,7 +21,7 @@ public class TestNode {
     @Test
     public void testNode_ComponentSetterAndGetter_SetsComponent() {
         Node tested = new Node();
-        IComponent statement = new StatementComponent();
+        IComponent statement = new StatementComponent(null);
 
         tested.setComponent(statement);
 
@@ -44,7 +44,7 @@ public class TestNode {
 
     @Test
     public void testNode_ConstructorWithComponent_SetsComponent() {
-        IComponent statement = new StatementComponent();
+        IComponent statement = new StatementComponent(null);
 
         Node tested = new Node(statement);
 
@@ -53,7 +53,7 @@ public class TestNode {
 
     @Test
     public void testNode_ConstructorWithComponent_NextIsNull() {
-        IComponent statement = new StatementComponent();
+        IComponent statement = new StatementComponent(null);
 
         Node tested = new Node(statement);
 
@@ -62,7 +62,7 @@ public class TestNode {
 
     @Test
     public void testNode_ConstructorWithComponentAndNext_SetsNext() {
-        IComponent statement = new StatementComponent();
+        IComponent statement = new StatementComponent(null);
 
         Node nextNode = new Node();
 
@@ -74,7 +74,7 @@ public class TestNode {
 
     @Test
     public void testNode_ConstructorWithComponentAndNext_SetsComponent() {
-        IComponent statement = new StatementComponent();
+        IComponent statement = new StatementComponent(null);
 
         Node nextNode = new Node();
 

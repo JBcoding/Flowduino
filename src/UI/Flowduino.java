@@ -19,6 +19,7 @@ import javafx.beans.*;
 import javafx.beans.value.*;
 
 import java.nio.BufferUnderflowException;
+import java.util.HashMap;
 
 /**
  * Demonstrates a drag-and-drop feature.
@@ -27,10 +28,15 @@ public class Flowduino extends Application {
 
     protected Group root;
     protected VBox buttonBox;
+    protected Document d = new Document();
+    protected Button saveButton;
+    protected IconMenu topBar;
+
+    protected HashMap<Rectangle, Node> targetNodeMap = new HashMap<>();
+    protected HashMap<Rectangle, Boolean> targetFirstMap = new HashMap<>();
 
     @Override 
     public void start(Stage stage) {
-        Document d = new Document();
 
         TreeView<String> treeView = treeViewFromDocument(d);
 
@@ -41,30 +47,29 @@ public class Flowduino extends Application {
 
         buttonBox = createButtonBox();
 
-        treeView.setPrefHeight(600);
         Scene scene = new Scene(root, 600, 600);
         scene.getStylesheets().add("style.css");
         scene.setFill(Color.LIGHTGREEN);
 
 
+        saveButton = new Button();
+        saveButton.setId("save-button");
+
+        topBar = new IconMenu();
+        topBar.add(saveButton);
+
 
         scene.heightProperty().addListener(new ChangeListener<Number>() {
             @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
-                treeView.setPrefHeight(newSceneHeight.intValue() - buttonBox.getHeight());
-                treeView.setTranslateY(buttonBox.getHeight());
+                treeView.setPrefHeight(newSceneHeight.intValue() - buttonBox.getHeight() - topBar.getMenu().getHeight());
+                treeView.setTranslateY(buttonBox.getHeight() + topBar.getMenu().getHeight());
+                buttonBox.setTranslateY(topBar.getMenu().getHeight());
             }
         });
 
 
 
         createProgramViewFromNode(d.getHead());
-
-        Button b = new Button();
-        b.setId("save-button");
-
-        IconMenu im = new IconMenu(b);
-
-        root.getChildren().addAll(im.getMenu());
 
         stage.setScene(scene);
         stage.setHeight(600);
@@ -77,7 +82,7 @@ public class Flowduino extends Application {
         Application.launch(args);
     }
 
-    public void insertDropTargetAtPosWithSize(int x, int y, int width, int height) {
+    public Rectangle insertDropTargetAtPosWithSize(int x, int y, int width, int height) {
         final Rectangle target = new Rectangle(x, y, width, height);
 
         target.setOnDragOver(new EventHandler <DragEvent>() {
@@ -133,12 +138,32 @@ public class Flowduino extends Application {
                 event.setDropCompleted(success);
 
                 event.consume();
-                createProgramViewFromNode(null);
+
+                Node n = targetNodeMap.get(target);
+                boolean b = targetFirstMap.get(target);
+                IComponent newComponent = null;
+                if (db.getString().equals("Commonly used - Delay")) {
+                    newComponent = new DelayComponent();
+                } else if (db.getString().equals("Commonly used - Break")) {
+                    newComponent = new BreakComponent();
+                } else if (db.getString().equals("Commonly used - Statement")) {
+                    newComponent = new StatementComponent(d.getVariables());
+                }
+                if (b) {
+                    Node newNode = new Node(n.getComponent(), n.getNext());
+                    n.setComponent(newComponent);
+                    n.setNext(newNode);
+                } else {
+                    n.setNext(new Node(newComponent, n.getNext()));
+                }
+
+                createProgramViewFromNode(d.getHead());
             }
         });
 
-
         root.getChildren().add(target);
+
+        return target;
     }
 
     public void createProgramViewFromNode(Node n) {
@@ -149,9 +174,36 @@ public class Flowduino extends Application {
             }
         }
         root.getChildren().clear();
+        targetNodeMap = new HashMap<>();
+        targetFirstMap = new HashMap<>();
         root.getChildren().add(treeView);
         root.getChildren().add(buttonBox);
-        insertDropTargetAtPosWithSize((int)(Math.random() * 200 + 200), (int)(Math.random() * 400), 100, 100);
+        root.getChildren().addAll(topBar.getMenu());
+        createProgramViewFromNodeRecursively(n, 300, 100, true);
+
+        System.out.println("----------------------------");
+        System.out.println(n.getProgramCode(0));
+        System.out.println("----------------------------");
+    }
+
+    public void createProgramViewFromNodeRecursively(Node n, int x, int y, boolean first) {
+        if (first) {
+            Rectangle r = insertDropTargetAtPosWithSize(x, y - 75, 50, 50);
+            targetNodeMap.put(r, n);
+            targetFirstMap.put(r, true);
+        }
+        if (n.getComponent() == null) {
+            return;
+        }
+        if (n.getComponent().getClass() == DelayComponent.class) {
+            // draw delay
+        }
+        Rectangle r = insertDropTargetAtPosWithSize(x, y, 50, 50);
+        targetNodeMap.put(r, n);
+        targetFirstMap.put(r, false);
+        if (n.getNext() != null) {
+            createProgramViewFromNodeRecursively(n.getNext(), x, y + 75, false);
+        }
     }
 
     public TreeView<String> treeViewFromDocument(Document d) {
@@ -202,14 +254,13 @@ public class Flowduino extends Application {
                     public void handle(MouseEvent mouseEvent) {
                         if (treeCell.getTreeItem().isLeaf()) {
                             /* drag was detected, start drag-and-drop gesture*/
-                            System.out.println("onDragDetected");
 
                             /* allow any transfer mode */
                             Dragboard db = treeCell.startDragAndDrop(TransferMode.COPY);
 
                             /* put a string on dragboard */
                             ClipboardContent content = new ClipboardContent();
-                            content.putString(treeCell.getText());
+                            content.putString(treeCell.getTreeItem().getParent().getValue() + " - " + treeCell.getText());
                             db.setContent(content);
 
                             mouseEvent.consume();
