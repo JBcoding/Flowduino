@@ -1,3 +1,4 @@
+import com.sun.org.apache.bcel.internal.generic.POP;
 import javafx.application.Application;
 import javafx.event.*;
 import javafx.geometry.Insets;
@@ -15,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.stage.WindowEvent;
 import javafx.util.*;
 import javafx.beans.property.*;
 import javafx.beans.*;
@@ -25,6 +27,7 @@ import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Demonstrates a drag-and-drop feature.
@@ -59,6 +62,8 @@ public class Flowduino extends Application {
         Scene scene = new Scene(root, 600, 600);
         scene.getStylesheets().add("style.css");
         scene.setFill(Color.valueOf("#3c3f41"));
+
+
 
         final ContextMenu contextMenu = new ContextMenu();
         MenuItem cut = new MenuItem("Cut");
@@ -127,12 +132,32 @@ public class Flowduino extends Application {
 
         createProgramViewFromNode(d.getHead());
 
+
+
         stage.setScene(scene);
         stage.setHeight(601);
         stage.setWidth(601);
         stage.setMaximized(true);
         stage.getIcons().add(new Image("file:images/save.png"));
         stage.show();
+        scene.getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
+            public void handle(WindowEvent ev) {
+
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Confirm exiting");
+                alert.setHeaderText("Are you sure you want to quit?");
+                alert.setContentText("Kappa");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK){
+                } else {
+                    ev.consume();
+                }
+
+
+
+            }
+        });
 
 
     }

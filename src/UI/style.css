@@ -89,7 +89,7 @@
 .target-no-block {
     -fx-fill: #1d2022;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 13, 0.6, 0, 0);
-    -fx-opacity: .3;
+    -fx-opacity: .1;
 }
 
 .target-block {
