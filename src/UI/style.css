@@ -3,6 +3,10 @@
     -fx-faint-focus-color: transparent;
 }
 
+.scroll-pane {
+    -fx-background-color: #3c3f41;
+}
+
 .scene {
     -fx-focus-color: transparent;
     -fx-padding: 0;
