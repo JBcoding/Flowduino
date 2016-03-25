@@ -78,7 +78,7 @@ public class Flowduino extends Application {
                 treeView.setPrefHeight(newSceneHeight.intValue() - buttonBox.getHeight() - topBar.getMenu().getHeight());
                 treeView.setTranslateY(buttonBox.getHeight() + topBar.getMenu().getHeight());
                 buttonBox.setTranslateY(topBar.getMenu().getHeight());
-                scrollPane.setTranslateY(topBar.getMenu().getHeight());
+                scrollPane.setTranslateY(topBar.getMenu().getHeight() + 2);
                 scrollPane.setMaxHeight(Math.max(1, newSceneHeight.doubleValue() - topBar.getMenu().getHeight()));
                 scrollPane.setMinHeight(Math.max(1, newSceneHeight.doubleValue() - topBar.getMenu().getHeight()));
                 scrollPane.setTranslateX(treeView.getWidth());
@@ -239,7 +239,7 @@ public class Flowduino extends Application {
         updateProgramViewSize();
 
         System.out.println("----------------------------");
-        //System.out.println(n.getProgramCode(0));
+        System.out.println(n.getProgramCode(0));
         System.out.println("----------------------------");
     }
 
@@ -292,7 +292,6 @@ public class Flowduino extends Application {
     public void updateProgramViewSize() {
         double newHeight = Math.max(maxY + 75, scrollPane.getHeight() - 2);
         programView.setMinHeight(newHeight);
-        System.out.println(newHeight + " - " + scrollPane.getHeight() + " - " + (maxY + 75));
         if (newHeight > scrollPane.getHeight() - 2) {
             programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth() - 14));
         } else {

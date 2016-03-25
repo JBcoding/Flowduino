@@ -59,11 +59,11 @@
     -fx-background-color: #555c57;
 }
 #save-button {
-    -fx-background-image: url("images/save.png");
+    -fx-background-image: url("file:images/save.png");
 }
 
 #open-button {
-    -fx-background-image: url("images/open.png");
+    -fx-background-image: url("file:images/open.png");
 }
 
 .icon-menu-button:hover {
@@ -103,7 +103,7 @@
 }
 
 #program-view {
-    -fx-background-image: url("images/background.png");
+    -fx-background-image: url("file:images/background.png");
     -fx-background-repeat: repeat;
     -fx-padding: 0;
 }
