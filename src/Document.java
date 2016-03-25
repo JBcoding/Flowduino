@@ -5,6 +5,7 @@ public class Document implements Serializable {
     protected List<Peripheral> peripherals = new ArrayList<Peripheral>();
     protected Variables variables = new Variables();
     protected Node head = new Node();
+    protected String name;
 
     public Document() {
         reloadPeripherals();
@@ -38,5 +39,13 @@ public class Document implements Serializable {
 
     public Variables getVariables() {
         return variables;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }

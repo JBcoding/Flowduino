@@ -172,7 +172,9 @@ public class Flowduino extends Application {
 
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.get() == buttonTypeOne){
-                        // ... user chose "One"
+                        if (!saveFile()) {
+                            ev.consume();
+                        }
                     } else if (result.get() == buttonTypeTwo) {
                         // ... user chose "Two"
                     } else {
@@ -485,26 +487,32 @@ public class Flowduino extends Application {
     }
 
 
-    public void saveFile() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save Flowduino file");
-        File file = fileChooser.showSaveDialog(stage);
-        if (file != null) {
-            String fileName = file.getAbsoluteFile().toString();
-            if (!fileName.toLowerCase().endsWith(".fdi")) {
-                fileName += ".fdi";
-            }
-            try {
-                FileOutputStream fileOut = new FileOutputStream(fileName);
-                ObjectOutputStream out = new ObjectOutputStream(fileOut);
-                out.writeObject(d);
-                out.close();
-                fileOut.close();
-            } catch (Exception e) {
-                System.out.println("Save failed");
-                e.printStackTrace();
+    public boolean saveFile() {
+        if (d.getName() == null) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Flowduino file");
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                String fileName = file.getAbsoluteFile().toString();
+                if (!fileName.toLowerCase().endsWith(".fdi")) {
+                    fileName += ".fdi";
+                }
+                d.setName(fileName);
+            } else {
+                return false;
             }
         }
+        try {
+            FileOutputStream fileOut = new FileOutputStream(d.getName());
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(d);
+            out.close();
+            fileOut.close();
+        } catch (Exception e) {
+            System.out.println("Save failed");
+            e.printStackTrace();
+        }
+        return true;
     }
 
     public void openFile() {
