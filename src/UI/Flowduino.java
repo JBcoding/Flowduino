@@ -142,20 +142,18 @@ public class Flowduino extends Application {
         stage.show();
         scene.getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent ev) {
+                if (d.getHead().getComponent() != null) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Confirm exiting");
+                    alert.setHeaderText("Are you sure you want to quit?");
+                    alert.setContentText("Kappa");
 
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirm exiting");
-                alert.setHeaderText("Are you sure you want to quit?");
-                alert.setContentText("Kappa");
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == ButtonType.OK){
-                } else {
-                    ev.consume();
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK) {
+                    } else {
+                        ev.consume();
+                    }
                 }
-
-
-
             }
         });
 
