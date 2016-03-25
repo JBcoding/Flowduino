@@ -1,5 +1,14 @@
 .root {
     -fx-focus-color: transparent;
+    -fx-padding: 0;
+    -fx-box-border: transparent;
+}
+
+.scene {
+    -fx-focus-color: transparent;
+    -fx-padding: 0;
+    -fx-box-border: transparent;
+
 }
 .tree-cell {
     -fx-background-color: #3c3f41;
@@ -23,7 +32,6 @@
 .buttons {
     -fx-pref-width: 200px;
     -fx-background-color: #3c3f41;
-    -fx-border-color: transparent;
     -fx-border-width: 0;
     -fx-padding: 0;
     -fx-border-radius: 0;
@@ -65,20 +73,24 @@
 
 .scroll-bar {
     -fx-background-color: #3c3f41;
+    -fx-box-border: transparent;
+
+    -fx-background-insets: 0, 0;
 }
 
 
 
 .corner {
     -fx-background-color: #3c3f41;
+    -fx-background-insets: 0, 0;
 }
 
 .scroll-bar:vertical {
-    -fx-pref-width: 10px;
+    -fx-pref-width: 12px;
 
 }
 .scroll-bar:horizontal {
-    -fx-pref-height: 10px;
+    -fx-pref-height: 12px;
 }
 
 
@@ -94,4 +106,6 @@
 #program-view {
     -fx-background-image: url("images/background.png");
     -fx-background-repeat: repeat;
+
+    -fx-padding: 0;
 }

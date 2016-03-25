@@ -55,7 +55,7 @@ public class Flowduino extends Application {
 
         Scene scene = new Scene(root, 600, 600);
         scene.getStylesheets().add("style.css");
-        scene.setFill(Color.LIGHTGREEN);
+        scene.setFill(Color.valueOf("#3c3f41"));
 
 
         saveButton = new Button();
