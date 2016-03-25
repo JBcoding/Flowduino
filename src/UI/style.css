@@ -1,5 +1,5 @@
-.menu-bar {
-
+.root {
+    -fx-focus-color: transparent;
 }
 .tree-cell {
     -fx-background-color: #3c3f41;
@@ -10,8 +10,11 @@
 }
 
 .tree-view {
-    -fx-max-width: 200px;
+    -fx-pref-width: 200px;
+    -fx-start-margin: 0;
+    -fx-border-color: #3c3f41;
     -fx-wrap-text: true;
+    -fx-padding: 0;
 }
 
 #button-box {
@@ -25,7 +28,32 @@
     -fx-padding: 0;
     -fx-border-radius: 0;
     -fx-border-style: none;
+    -fx-text-alignment: left;
+    -fx-text-fill: #acacac;
+    -fx-background-radius: 0;
+    -fx-alignment: baseline-left;
+    -fx-label-padding: 10px 0 10px 20px;
+    -fx-cursor: hand;
 }
-.buttons {
 
+#icon-menu {
+    -fx-pref-width: 600px;
+    -fx-pref-height: 30px;
+    -fx-background-color: #555c57;
+}
+
+.icon-menu-button {
+    -fx-pref-width: 30px;
+    -fx-pref-height: 29px;
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+#save-button {
+    -fx-background-image: url("/images/save.png");
+    -fx-background-color: #555c57;
+    -fx-background-size: stretch;
+}
+#save-button:hover {
+    -fx-opacity: .8;
 }

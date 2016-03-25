@@ -46,20 +46,7 @@ public class Flowduino extends Application {
         scene.getStylesheets().add("style.css");
         scene.setFill(Color.LIGHTGREEN);
 
-        MenuBar menuBar = new MenuBar();
 
-        // --- Menu File
-        Menu menuFile = new Menu("File");
-
-        // --- Menu Edit
-        Menu menuEdit = new Menu("Edit");
-
-        // --- Menu View
-        Menu menuView = new Menu("View");
-
-        menuBar.getMenus().addAll(menuFile, menuEdit, menuView);
-
-        ((Group) scene.getRoot()).getChildren().addAll(menuBar);
 
         scene.heightProperty().addListener(new ChangeListener<Number>() {
             @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
@@ -68,7 +55,16 @@ public class Flowduino extends Application {
             }
         });
 
+
+
         createProgramViewFromNode(d.getHead());
+
+        Button b = new Button();
+        b.setId("save-button");
+
+        IconMenu im = new IconMenu(b);
+
+        root.getChildren().addAll(im.getMenu());
 
         stage.setScene(scene);
         stage.setHeight(600);
