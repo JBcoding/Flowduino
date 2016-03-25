@@ -80,7 +80,6 @@ public class Flowduino extends Application {
                 scrollPane.setMaxHeight(Math.max(1, newSceneHeight.doubleValue() - topBar.getMenu().getHeight()));
                 scrollPane.setMinHeight(Math.max(1, newSceneHeight.doubleValue() - topBar.getMenu().getHeight()));
                 scrollPane.setTranslateX(treeView.getWidth());
-                createProgramViewFromNode(d.getHead());
             }
         });
         scene.widthProperty().addListener(new ChangeListener<Number>() {
@@ -89,10 +88,20 @@ public class Flowduino extends Application {
                 scrollPane.setTranslateX(treeView.getWidth());
                 scrollPane.setMaxWidth(Math.max(1, newSceneWidth.doubleValue() - treeView.getWidth()));
                 scrollPane.setMinWidth(Math.max(1, newSceneWidth.doubleValue() - treeView.getWidth()));
+            }
+        });
+
+        scrollPane.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHWidth, Number newSceneWidth) {
                 createProgramViewFromNode(d.getHead());
             }
         });
 
+        scrollPane.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHWidth, Number newSceneWidth) {
+                createProgramViewFromNode(d.getHead());
+            }
+        });
 
 
         createProgramViewFromNode(d.getHead());
@@ -251,12 +260,12 @@ public class Flowduino extends Application {
             // draw loop
             // draw extra targets
             Loop loop = (Loop)n.getComponent();
-
             Point loopSize = createProgramViewFromNodeRecursively(loop.getHeadOfContent(), x, y + 75, true);
             x = loopSize.x;
             y = loopSize.y;
         } else if (n.getComponent().getClass() == IfComponent.class) {
             // draw if
+
         }
         // make target for after
         Rectangle r = insertDropTargetAtPosWithSize(x, y, 50, 50);
