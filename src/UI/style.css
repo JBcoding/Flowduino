@@ -40,6 +40,7 @@
     -fx-pref-width: 600px;
     -fx-pref-height: 30px;
     -fx-background-color: #555c57;
+    -fx-padding: 0 10px;
 }
 
 .icon-menu-button {
@@ -47,13 +48,39 @@
     -fx-pref-height: 29px;
     -fx-border-width: 0;
     -fx-border-color: transparent;
-    -fx-padding: 0;
+    -fx-background-size: stretch;
+    -fx-background-color: #555c57;
 }
 #save-button {
-    -fx-background-image: url("/images/save.png");
-    -fx-background-color: #555c57;
-    -fx-background-size: stretch;
+    -fx-background-image: url("images/save.png");
 }
-#save-button:hover {
+
+#open-button {
+    -fx-background-image: url("images/open.png");
+}
+
+.icon-menu-button:hover {
     -fx-opacity: .8;
+}
+
+.scroll-bar {
+    -fx-background-color: #3c3f41;
+}
+
+.scroll-bar:vertical {
+    -fx-pref-width: 10px;
+
+}
+.scroll-bar:horizontal {
+    -fx-pref-height: 10px;
+}
+
+
+
+.scroll-bar > .track, .scroll-bar > .decrement-button, .scroll-bar > .increment-button {
+    -fx-opacity: 0;
+}
+.scroll-bar:vertical > .thumb {
+    -fx-opacity: 1;
+    -fx-background-color: #555c57;
 }

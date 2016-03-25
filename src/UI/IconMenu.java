@@ -13,6 +13,7 @@ public class IconMenu {
 
     public IconMenu(Button ... buttons) {
         menu = new HBox();
+        menu.setSpacing(5.0);
         menu.setId("icon-menu");
         for (Button b : buttons) {
             add(b);

@@ -30,6 +30,7 @@ public class Flowduino extends Application {
     protected VBox buttonBox;
     protected Document d = new Document();
     protected Button saveButton;
+    protected Button openButton;
     protected IconMenu topBar;
     protected Pane programView;
     protected ScrollPane scrollPane;
@@ -57,12 +58,14 @@ public class Flowduino extends Application {
         saveButton = new Button();
         saveButton.setId("save-button");
 
-        topBar = new IconMenu(saveButton);
+        openButton = new Button();
+        openButton.setId("open-button");
+
+        topBar = new IconMenu(saveButton, openButton);
 
         programView = new Pane();
         scrollPane = new ScrollPane();
         scrollPane.setContent(programView);
-
 
         scene.heightProperty().addListener(new ChangeListener<Number>() {
             @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
