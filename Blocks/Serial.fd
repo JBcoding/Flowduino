@@ -30,7 +30,7 @@ Serial
                 String message
             [call]
                 Serial.print({0})
-        print
+        println
             [description]
                 Writes String as line to Serial
             [parameters]

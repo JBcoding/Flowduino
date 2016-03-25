@@ -22,6 +22,8 @@ import javafx.beans.value.*;
  */
 public class Flowduino extends Application {
 
+    protected Group root;
+
     @Override 
     public void start(Stage stage) {
         Document d = new Document();
@@ -31,7 +33,7 @@ public class Flowduino extends Application {
 
         TreeItem<String> commonlyUsed = new TreeItem<String> ("Commonly used");
         commonlyUsed.setExpanded(true);
-        String[] commonlyUsedBlocks = new String[] {"Statement", "If", "Loop", "Delay", "Break"};
+        String[] commonlyUsedBlocks = new String[] {"If", "Loop", "Delay", "Break", "Statement"};
         for (String s : commonlyUsedBlocks) {
             TreeItem<String> item = new TreeItem<String> (s);            
             commonlyUsed.getChildren().add(item);
@@ -94,7 +96,7 @@ public class Flowduino extends Application {
 
         stage.setTitle("Flowduino");
 
-        Group root = new Group();   
+        root = new Group();
         root.getChildren().add(treeView);
 
         treeView.setPrefHeight(600);
@@ -175,6 +177,7 @@ public class Flowduino extends Application {
                 event.setDropCompleted(success);
                 
                 event.consume();
+                createProgramViewFromNode(null);
             }
         });
         target2.setOnDragDropped(target.getOnDragDropped());
@@ -188,5 +191,9 @@ public class Flowduino extends Application {
 
     public static void main(String[] args) {
         Application.launch(args);
+    }
+
+    public void createProgramViewFromNode(Node n) {
+        root.getChildren().clear();
     }
 }

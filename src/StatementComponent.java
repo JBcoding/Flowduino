@@ -2,11 +2,12 @@ import java.util.*;
 
 public class StatementComponent implements IComponent{
     String value;
+    Variables variables;
 
     public StatementComponent() {}
 
-    public StatementComponent(String value) {
-        this.value = value;
+    public StatementComponent(Variables variables) {
+        this.variables = variables;
     }
 
     public String getValue() {
