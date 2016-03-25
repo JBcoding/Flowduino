@@ -124,6 +124,7 @@ public class Flowduino extends Application {
         final Rectangle target = new Rectangle(x, y, width, height);
         maxX = Math.max(maxX, x);
         maxY = Math.max(maxY, y);
+        target.getStyleClass().add("target-no-block");
 
         target.setOnDragOver(new EventHandler <DragEvent>() {
             public void handle(DragEvent event) {
@@ -147,7 +148,8 @@ public class Flowduino extends Application {
                 /* show to the user that it is an actual gesture target */
                 if (event.getGestureSource() != this &&
                         event.getDragboard().hasString()) {
-                    target.setFill(Color.GREEN);
+                    target.getStyleClass().add("target-block");
+                    target.getStyleClass().remove("target-no-block");
                 }
 
                 event.consume();
@@ -157,7 +159,8 @@ public class Flowduino extends Application {
         target.setOnDragExited(new EventHandler <DragEvent>() {
             public void handle(DragEvent event) {
                 /* mouse moved away, remove the graphical cues */
-                target.setFill(Color.BLACK);
+                target.getStyleClass().add("target-no-block");
+                target.getStyleClass().remove("target-block");
 
                 event.consume();
             }
@@ -235,7 +238,7 @@ public class Flowduino extends Application {
         root.getChildren().add(scrollPane);
         maxX = 0;
         maxY = 0;
-        createProgramViewFromNodeRecursively(n, 25, 100, true);
+        createProgramViewFromNodeRecursively(n, 50, 125, true);
         updateProgramViewSize();
 
         System.out.println("----------------------------");
@@ -247,7 +250,7 @@ public class Flowduino extends Application {
     private int maxY;
     public Point createProgramViewFromNodeRecursively(Node n, int x, int y, boolean first) {
         if (first) {
-            Rectangle r = insertDropTargetAtPosWithSize(x, y - 75, 50, 50);
+            Rectangle r = insertDropTargetAtPosWithSize(x, y - 75, 50, 25);
             targetNodeMap.put(r, n);
             targetFirstMap.put(r, true);
         }
@@ -272,13 +275,13 @@ public class Flowduino extends Application {
             Point ifSize = new Point(x, y);
             for (Node ifNode : ifComponent.getHeadOfContents()) {
                 Point ifNodeSize = createProgramViewFromNodeRecursively(ifNode, ifSize.x, y + 75, true);
-                ifSize.x = Math.max(ifNodeSize.x + 75, ifSize.x);
+                ifSize.x = Math.max(ifNodeSize.x + 100, ifSize.x);
                 ifSize.y = Math.max(ifNodeSize.y, ifSize.y);
             }
             y = ifSize.y;
         }
         // make target for after
-        Rectangle r = insertDropTargetAtPosWithSize(x, y, 50, 50);
+        Rectangle r = insertDropTargetAtPosWithSize(x, y, 50, 25);
         targetNodeMap.put(r, n);
         targetFirstMap.put(r, false);
         if (n.getNext() != null) {
