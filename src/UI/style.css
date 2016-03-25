@@ -1,7 +1,6 @@
 .root {
     -fx-focus-color: transparent;
-    -fx-padding: 0;
-    -fx-box-border: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .scene {
@@ -106,6 +105,6 @@
 #program-view {
     -fx-background-image: url("images/background.png");
     -fx-background-repeat: repeat;
-
     -fx-padding: 0;
 }
+
