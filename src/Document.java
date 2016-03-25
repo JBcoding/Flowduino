@@ -2,9 +2,9 @@ import java.util.*;
 import java.io.*;
 
 public class Document implements Serializable {
-    List<Peripheral> peripherals = new ArrayList<Peripheral>();
-    Variables variables = new Variables();
-    Node head = new Node();
+    protected List<Peripheral> peripherals = new ArrayList<Peripheral>();
+    protected Variables variables = new Variables();
+    protected Node head = new Node();
 
     public Document() {
         File dir = new File("Blocks");
@@ -22,5 +22,9 @@ public class Document implements Serializable {
 
     public List<Peripheral> getPeripherals() {
         return peripherals;
+    }
+
+    public Node getHead() {
+        return head;
     }
 }
