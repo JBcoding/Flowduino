@@ -13,7 +13,7 @@ public class StatementComponent implements IComponent{
         return value;
     }
 
-    public void setValue(String value) {
+    public void setValue(String value) throws MalformedExpressionException {
         this.value = value;
     }
 
@@ -40,10 +40,10 @@ public class StatementComponent implements IComponent{
         while (valueCopy.indexOf("  ") != -1) {
             valueCopy = valueCopy.replace("  ", " ");
         }
-        String[] variabelsArray = valueCopy.split(" ");
-        Set<String> variabels = new HashSet<String>(Arrays.asList(variabelsArray));
+        String[] variablesArray = valueCopy.split(" ");
+        Set<String> variables = new HashSet<String>(Arrays.asList(variablesArray));
         valueCopy = new String(value);
-        for (String s : variabels) {
+        for (String s : variables) {
             valueCopy = valueCopy.replaceAll(s + "(?=([^\"']*[\"'][^\"']*[\"'])*[^\"']*$)", "FV_" + s);
         }
         String[] lines = valueCopy.split("\n");

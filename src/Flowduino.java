@@ -1,7 +1,7 @@
 import java.util.*;
 
 public class Flowduino {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws VariableNotFoundException {
         Peripheral led = new Peripheral("Blocks/LED.fd");
         GenericPeripheral b = new GenericPeripheral(led);
         b.updateValueAtKey("pin", "14");
@@ -22,9 +22,11 @@ public class Flowduino {
 
         System.out.println();
 
-        List<Variable> variables = new ArrayList<Variable>() {{add(new Variable("i", "int", "0")); add(new Variable("g", "string", "hej")); add(new Variable("b", "float"));}};
 
-        ForLoop forLoop = new ForLoop(variables.get(2), new Constant(4), new Constant(80), new Constant(.4));
+
+        Variables.setVariables(new ArrayList<Variable>() {{add(new Variable("i", "int", "0")); add(new Variable("g", "string", "hej")); add(new Variable("b", "float"));}});
+
+        ForLoop forLoop = new ForLoop(Variables.get(2), new Constant(4), new Constant(80), new Constant(.4));
         StatementComponent i2 = new StatementComponent("i *= 2");
         StatementComponent i3 = new StatementComponent("i *= 3");
 
@@ -32,8 +34,8 @@ public class Flowduino {
         Node i2Node = new Node(i2);
         Node i3Node = new Node(i3);
 
-        Case ifA = new Case(new Case(variables.get(0), new Constant(3), "=="), new Case(new Constant(4), variables.get(0), "=="), "||");
-        Case ifB = new Case(variables.get(0), new Constant(4), "==");
+        Case ifA = new Case(new Case(Variables.get(0), new Constant(3), "=="), new Case(new Constant(4), Variables.get(0), "=="), "||");
+        Case ifB = new Case(Variables.get(0), new Constant(4), "==");
 
         List<Node> nodes = new ArrayList<Node>() {{add(forLoopNode); add(i2Node); add(i3Node);}};
         List<ICase> cases = new ArrayList<ICase>() {{add(ifA); add(ifB);}};
@@ -47,7 +49,7 @@ public class Flowduino {
 
         forLoopNode.setNext(staementNode);
 
-        WhileLoop whileLoop = new WhileLoop(new Case(variables.get(0), new Constant(0), ">"));
+        WhileLoop whileLoop = new WhileLoop(new Case(Variables.get(0), new Constant(0), ">"));
         Node whileLoopNode = new Node(whileLoop);
 
         staementNode.setNext(whileLoopNode);
@@ -68,7 +70,7 @@ public class Flowduino {
 
         String code = "";
         // init
-        for (Variable current : variables) {
+        for (Variable current : Variables.getVariables()) {
             code += current.getInitCode() + "\n";
         }
         code += "\n\n\n\n";
