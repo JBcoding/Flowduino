@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.*;
 
-public class PeripheralFunction {
+public class PeripheralFunction implements Serializable {
     protected String name;
     protected String description;
     protected String call;

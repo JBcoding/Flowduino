@@ -7,11 +7,15 @@ public class Document implements Serializable {
     protected Node head = new Node();
 
     public Document() {
+        reloadPeripherals();
+    }
+
+    public void reloadPeripherals() {
         File dir = new File("Blocks");
         File [] files = dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.toLowerCase().endsWith(".fd"); 
+                return name.toLowerCase().endsWith(".fd");
             }
         });
 

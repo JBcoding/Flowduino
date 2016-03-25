@@ -8,8 +8,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.application.Application;
 import javafx.scene.control.*;
@@ -23,6 +25,7 @@ import javafx.beans.*;
 import javafx.beans.value.*;
 
 import java.awt.Point;
+import java.io.*;
 import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,13 +46,14 @@ public class Flowduino extends Application {
     protected IconMenu topBar;
     protected Pane programView;
     protected ScrollPane scrollPane;
+    protected Stage stage;
 
     protected HashMap<Rectangle, Node> targetNodeMap = new HashMap<>();
     protected HashMap<Rectangle, Boolean> targetFirstMap = new HashMap<>();
 
     @Override 
     public void start(Stage stage) {
-
+        this.stage = stage;
         TreeView<String> treeView = treeViewFromDocument(d);
 
         stage.setTitle("Flowduino");
@@ -79,11 +83,23 @@ public class Flowduino extends Application {
 
         saveButton = new Button();
         saveButton.setId("save-button");
+        saveButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                saveFile();
+            }
+        });
         saveButton.setTooltip(new Tooltip("Save file"));
         saveButton.setContextMenu(contextMenu);
 
         openButton = new Button();
         openButton.setId("open-button");
+        openButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                openFile();
+            }
+        });
         openButton.setTooltip(new Tooltip("Open Project"));
 
         runButton = new Button();
@@ -175,6 +191,7 @@ public class Flowduino extends Application {
 
     public Rectangle insertDropTargetAtPosWithSize(int x, int y, int width, int height) {
         final Rectangle target = new Rectangle(x, y, width, height);
+        target.toFront();
         maxX = Math.max(maxX, x);
         maxY = Math.max(maxY, y);
         target.getStyleClass().add("target-no-block");
@@ -252,7 +269,9 @@ public class Flowduino extends Application {
                     List<Node> nodes = new ArrayList<>();
                     nodes.add(new Node());
                     nodes.add(new Node());
+                    nodes.add(new Node());
                     List<ICase> cases = new ArrayList<>();
+                    cases.add(new Case(new Variable("i", "int"), new Constant(4), ">="));
                     cases.add(new Case(new Variable("i", "int"), new Constant(4), ">="));
                     IfComponent ifComponent = new IfComponent(nodes, cases);
                     newComponent = ifComponent;
@@ -274,6 +293,24 @@ public class Flowduino extends Application {
         return target;
     }
 
+    public void drawLine(int startX, int startY, int endX, int endY) {
+        Line line = new Line(startX, startY, endX, endY);
+        line.setFill(Color.PINK);
+        line.setStrokeWidth(10);
+        line.toBack();
+        line.setDisable(true);
+        line.getStyleClass().add("line");
+        programView.getChildren().add(line);
+    }
+
+    public void drawLineBetweenTargets(int startX, int startY, int endX, int endY) {
+        drawLine(startX + targetWidth / 2, startY + targetHeight / 2, endX + targetWidth / 2, endY + targetHeight / 2);
+    }
+
+    private int targetWidth = 75;
+    private int targetHeight = 25;
+    private int blockHeight = 50;
+    private int xSpaceBetweenTargets = 50;
     public void createProgramViewFromNode(Node n) {
         TreeView<String> treeView = null;
         for (Object o : root.getChildren()) {
@@ -291,7 +328,7 @@ public class Flowduino extends Application {
         root.getChildren().add(scrollPane);
         maxX = 0;
         maxY = 0;
-        createProgramViewFromNodeRecursively(n, 50, 50, true);
+        createProgramViewFromNodeRecursively(n, xSpaceBetweenTargets, blockHeight, true);
         updateProgramViewSize();
 
         System.out.println("----------------------------");
@@ -302,14 +339,14 @@ public class Flowduino extends Application {
     private int maxX;
     private int maxY;
     public BranchData createProgramViewFromNodeRecursively(Node n, int x, int y, boolean first) {
-        BranchData thisBranch = new BranchData(x, y, 0, 75);
+        BranchData thisBranch = new BranchData(x, y, 0, blockHeight + targetHeight);
         if (first) {
-            Rectangle r = insertDropTargetAtPosWithSize(x, y, 50, 25);
+            Rectangle r = insertDropTargetAtPosWithSize(x, y, targetWidth, targetHeight);
             targetNodeMap.put(r, n);
             targetFirstMap.put(r, true);
         }
         if (n.getComponent() == null) {
-            return new BranchData(x, y, 0, 75);
+            return new BranchData(x, y, 0, blockHeight + targetHeight);
         }
         if (n.getComponent().getClass() == DelayComponent.class) {
             // draw delay
@@ -323,22 +360,33 @@ public class Flowduino extends Application {
             Loop loop = (Loop)n.getComponent();
             BranchData loopSize = createProgramViewFromNodeRecursively(loop.getHeadOfContent(), thisBranch.x, thisBranch.nextY(), true);
             thisBranch.width = loopSize.width;
-            thisBranch.height = loopSize.height + 75;
+            thisBranch.height = loopSize.height + blockHeight + targetHeight;
         } else if (n.getComponent().getClass() == IfComponent.class) {
             // draw if
             IfComponent ifComponent = (IfComponent)n.getComponent();
+            List<BranchData> ifNodeSize = new ArrayList<>();
             for (Node ifNode : ifComponent.getHeadOfContents()) {
-                BranchData ifNodeSize = createProgramViewFromNodeRecursively(ifNode, thisBranch.nextX(), thisBranch.y + 75, true);
-                thisBranch.width += ifNodeSize.width + 100;
-                thisBranch.height = Math.max(ifNodeSize.height + 75, thisBranch.height);
+                ifNodeSize.add(createProgramViewFromNodeRecursively(ifNode, thisBranch.nextX(), thisBranch.y + blockHeight + targetHeight, true));
+                BranchData last = ifNodeSize.get(ifNodeSize.size() - 1);
+                thisBranch.width += last.width + xSpaceBetweenTargets + targetWidth;
+                thisBranch.height = Math.max(last.height + blockHeight + targetHeight, thisBranch.height);
             }
-            thisBranch.width -= 100;
+            int offset = blockHeight / 2 + targetHeight / 2;
+            for (BranchData bd : ifNodeSize) {
+                drawLineBetweenTargets(bd.x, bd.y - offset, bd.x, bd.y + thisBranch.height - offset * 3 - 2);
+            }
+            thisBranch.width -= xSpaceBetweenTargets + targetWidth;
+            int height1 = thisBranch.y + blockHeight / 2 + targetHeight / 2;
+            int height2 = thisBranch.y + thisBranch.height - (blockHeight / 2 + targetHeight / 2);
+            drawLineBetweenTargets(thisBranch.x, height1, thisBranch.nextX() - ifNodeSize.get(ifNodeSize.size() - 1).width, height1);
+            drawLineBetweenTargets(thisBranch.x, height2, thisBranch.nextX() - ifNodeSize.get(ifNodeSize.size() - 1).width, height2);
         }
         // make target for after
-        Rectangle r = insertDropTargetAtPosWithSize(thisBranch.x, thisBranch.nextY(), 50, 25);
+        Rectangle r = insertDropTargetAtPosWithSize(thisBranch.x, thisBranch.nextY(), targetWidth, targetHeight);
         targetNodeMap.put(r, n);
         targetFirstMap.put(r, false);
         if (n.getNext() != null) {
+            drawLineBetweenTargets(thisBranch.x, thisBranch.y, thisBranch.x, thisBranch.nextY());
             BranchData temp = createProgramViewFromNodeRecursively(n.getNext(), thisBranch.x, thisBranch.nextY(), false);
             thisBranch.height += temp.height;
         }
@@ -346,12 +394,12 @@ public class Flowduino extends Application {
     }
 
     public void updateProgramViewSize() {
-        double newHeight = Math.max(maxY + 75, scrollPane.getHeight() - 2);
+        double newHeight = Math.max(maxY + blockHeight + targetHeight, scrollPane.getHeight() - 2);
         programView.setMinHeight(newHeight);
         if (newHeight > scrollPane.getHeight() - 2) {
-            programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth() - 14));
+            programView.setMinWidth(Math.max(maxX + xSpaceBetweenTargets + targetWidth, scrollPane.getWidth() - 14));
         } else {
-            programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth() - 2));
+            programView.setMinWidth(Math.max(maxX + xSpaceBetweenTargets + targetWidth, scrollPane.getWidth() - 2));
         }
     }
 
@@ -434,5 +482,58 @@ public class Flowduino extends Application {
         buttonObjects.getStyleClass().add("buttons");
         buttonBox.getChildren().addAll(buttonSettings, buttonVariables, buttonObjects);
         return buttonBox;
+    }
+
+
+    public void saveFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save Flowduino file");
+        File file = fileChooser.showSaveDialog(stage);
+        if (file != null) {
+            String fileName = file.getAbsoluteFile().toString();
+            if (!fileName.toLowerCase().endsWith(".fdi")) {
+                fileName += ".fdi";
+            }
+            try {
+                FileOutputStream fileOut = new FileOutputStream(fileName);
+                ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                out.writeObject(d);
+                out.close();
+                fileOut.close();
+            } catch (Exception e) {
+                System.out.println("Save failed");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void openFile() {
+        final FileChooser fileChooser = new FileChooser();
+        configureFileChooser(fileChooser);
+        File file = fileChooser.showOpenDialog(stage);
+        if (file != null) {
+            String fileName = file.getAbsoluteFile().toString();
+            try {
+                FileInputStream fileIn = new FileInputStream(fileName);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                d = (Document)in.readObject();
+                in.close();
+                fileIn.close();
+            } catch(Exception e) {
+
+            }
+            d.reloadPeripherals();
+            createProgramViewFromNode(d.getHead());
+        }
+    }
+
+    private static void configureFileChooser(final FileChooser fileChooser) {
+        fileChooser.setTitle("Flowduino");
+        fileChooser.setInitialDirectory(
+            new File(System.getProperty("user.home"))
+        );
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("Flowduino file (*.fdi)", "*.fdi")
+        );
     }
 }

@@ -1,7 +1,9 @@
+import java.io.Serializable;
+
 /**
  * Created by mathias on 22/03/16.
  */
-public class Node {
+public class Node implements Serializable {
     protected Node next;
     protected IComponent component;
 

@@ -3,7 +3,7 @@ import java.util.List;
 import java.io.*;
 import java.util.*;
 
-public class Peripheral {
+public class Peripheral implements Serializable {
     protected String name;
     protected String title;
     protected List<String> imports;

@@ -1,10 +1,11 @@
+import java.io.Serializable;
 import java.util.*;
 
 
 /**
  * Created by mathias on 24/03/16.
  */
-public class Variables {
+public class Variables implements Serializable {
     protected List<Variable> variables = new ArrayList<Variable>() {};
 
     public void Add(Variable variable) {
