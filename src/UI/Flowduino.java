@@ -145,11 +145,20 @@ public class Flowduino extends Application {
                 if (d.getHead().getComponent() != null) {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     alert.setTitle("Confirm exiting");
-                    alert.setHeaderText("Are you sure you want to quit?");
-                    alert.setContentText("Kappa");
+                    alert.setHeaderText("Are you sure you want to exit?");
+                    alert.setContentText("Do you want to save before quitting?");
+
+                    ButtonType buttonTypeOne = new ButtonType("Save and exit");
+                    ButtonType buttonTypeTwo = new ButtonType("Exit without saving");
+                    ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+                    alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
 
                     Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == ButtonType.OK) {
+                    if (result.get() == buttonTypeOne){
+                        // ... user chose "One"
+                    } else if (result.get() == buttonTypeTwo) {
+                        // ... user chose "Two"
                     } else {
                         ev.consume();
                     }

@@ -143,3 +143,12 @@
 .menu-item:focused {
     -fx-background-color: #3c3f41;
 }
+
+.alert {
+    -fx-fill: black;
+}
+
+.dialog-pane {
+    -fx-background-color: red;
+    -fx-padding: 0;
+}
