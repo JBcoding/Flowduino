@@ -102,11 +102,12 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_MalformedSingleLineStatement_ThrowsException() {
-        Variables.setVariables(new ArrayList<Variable>() {{
+        Variables variables = new Variables();
+        variables.setVariables(new ArrayList<Variable>() {{
             add(new Variable("i", "string", "teststring"));
             add(new Variable("j", "string", "anotherTestsstring"));
         }});
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(variables);
 
         String input = "j = 4";
 
@@ -120,11 +121,12 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_MalformedMultiLineStatement_ThrowsException() {
-        Variables.setVariables(new ArrayList<Variable>() {{
+        Variables variables = new Variables();
+        variables.setVariables(new ArrayList<Variable>() {{
             add(new Variable("i", "string", "teststring"));
             add(new Variable("j", "string", "anotherTestsstring"));
         }});
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(variables);
 
         String input = "j = 4\ni = \"stringinput\"hej";
 
@@ -138,12 +140,13 @@ public class TestStatementComponent {
 
     @Test
     public void testStatement_MalformedSingleLineStatementIntToString_ThrowsException() {
-        Variables.setVariables(new ArrayList<Variable>() {{
+        Variables variables = new Variables();
+        variables.setVariables(new ArrayList<Variable>() {{
             add(new Variable("i", "int", "4"));
         }});
-        StatementComponent statement = new StatementComponent();
+        StatementComponent statement = new StatementComponent(variables);
 
-        String input = "j = \"test\"";
+        String input = "i = \"test\"";
 
         try {
             statement.setValue(input);

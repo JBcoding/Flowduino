@@ -43,4 +43,8 @@ public class PeripheralFunction {
     public String getCall() {
         return call;
     }
+
+    public String getName() {
+        return name;
+    }
 }

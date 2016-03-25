@@ -74,4 +74,8 @@ public class Peripheral {
     public List<PeripheralFunction> getFunctions() {
         return functions;
     }
+
+    public String getName() {
+        return name;
+    }
 }
