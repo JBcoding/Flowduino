@@ -3,6 +3,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -18,6 +20,7 @@ import javafx.beans.property.*;
 import javafx.beans.*;
 import javafx.beans.value.*;
 
+import java.awt.*;
 import java.nio.BufferUnderflowException;
 import java.util.HashMap;
 
@@ -64,6 +67,7 @@ public class Flowduino extends Application {
         topBar = new IconMenu(saveButton, openButton);
 
         programView = new Pane();
+        programView.setId("program-view");
         scrollPane = new ScrollPane();
         scrollPane.setContent(programView);
 
@@ -169,6 +173,10 @@ public class Flowduino extends Application {
                     newComponent = new BreakComponent();
                 } else if (db.getString().equals("Commonly used - Statement")) {
                     newComponent = new StatementComponent(d.getVariables());
+                } else if (db.getString().equals("Commonly used - Loop")) {
+                    ForLoop forLoop = new ForLoop(new Variable("i", "int"), new Constant("0"), new Constant("4"), new Constant("1"));
+                    forLoop.setHeadOfContent(new Node());
+                    newComponent = forLoop;
                 }
                 if (b) {
                     Node newNode = new Node(n.getComponent(), n.getNext());
@@ -213,28 +221,49 @@ public class Flowduino extends Application {
 
     private int maxX;
     private int maxY;
-    public void createProgramViewFromNodeRecursively(Node n, int x, int y, boolean first) {
-        maxX = Math.max(maxX, x);
-        maxY = Math.max(maxY, y);
+    public Point createProgramViewFromNodeRecursively(Node n, int x, int y, boolean first) {
         if (first) {
             Rectangle r = insertDropTargetAtPosWithSize(x, y - 75, 50, 50);
             targetNodeMap.put(r, n);
             targetFirstMap.put(r, true);
         }
         if (n.getComponent() == null) {
-            programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth()));
-            programView.setMinHeight(Math.max(maxY + 75, scrollPane.getHeight()));
-            return;
+            double newHeight = Math.max(maxY + 75, scrollPane.getHeight() - 2);
+            programView.setMinHeight(newHeight);
+            if (newHeight > scrollPane.getHeight()) {
+                programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth() - 12));
+            } else {
+                programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth() - 2));
+            }
+            return new Point(x, y + 75);
         }
+        maxX = Math.max(maxX, x);
+        maxY = Math.max(maxY, y);
         if (n.getComponent().getClass() == DelayComponent.class) {
             // draw delay
+        } else if (n.getComponent().getClass() == BreakComponent.class) {
+            // draw break
+        } else if (n.getComponent().getClass() == StatementComponent.class) {
+            // draw statement
+        } else if (n.getComponent().getClass() == ForLoop.class || n.getComponent().getClass() == WhileLoop.class) {
+            // draw loop
+            // draw extra targets
+            Loop loop = (Loop)n.getComponent();
+
+            Point loopSize = createProgramViewFromNodeRecursively(loop.getHeadOfContent(), x, y + 75, true);
+        } else if (n.getComponent().getClass() == IfComponent.class) {
+            // draw if
         }
+        // make target for after
         Rectangle r = insertDropTargetAtPosWithSize(x, y, 50, 50);
         targetNodeMap.put(r, n);
         targetFirstMap.put(r, false);
         if (n.getNext() != null) {
-            createProgramViewFromNodeRecursively(n.getNext(), x, y + 75, false);
+            Point temp = createProgramViewFromNodeRecursively(n.getNext(), x, y + 75, false);
+            x = temp.x;
+            y = temp.y;
         }
+        return new Point(x, y + 75);
     }
 
     public TreeView<String> treeViewFromDocument(Document d) {

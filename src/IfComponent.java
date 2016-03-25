@@ -20,7 +20,7 @@ public class IfComponent extends ConditionalExecution {
         for (int i = 0; i < cases.size(); i ++) {
             code += ((i != 0) ? " else " : "") + "if (" + cases.get(i).toCode() + ") {\n" + headOfContents.get(i).getProgramCode(tabDepth + Settings.getTabDepth()) + "\n" + tab + "}";
         }
-        if (cases.size() < headOfContents.size()) {
+        if (cases.size() < headOfContents.size() && headOfContents.get(headOfContents.size() - 1).component != null) {
             code += " else {\n" + headOfContents.get(headOfContents.size() - 1).getProgramCode(tabDepth + Settings.getTabDepth()) + "\n" + tab + "}";
         }
         return code;
