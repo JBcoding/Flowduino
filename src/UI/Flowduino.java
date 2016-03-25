@@ -238,7 +238,7 @@ public class Flowduino extends Application {
         root.getChildren().add(scrollPane);
         maxX = 0;
         maxY = 0;
-        createProgramViewFromNodeRecursively(n, 50, 125, true);
+        createProgramViewFromNodeRecursively(n, 50, 50, true);
         updateProgramViewSize();
 
         System.out.println("----------------------------");
@@ -248,14 +248,15 @@ public class Flowduino extends Application {
 
     private int maxX;
     private int maxY;
-    public Point createProgramViewFromNodeRecursively(Node n, int x, int y, boolean first) {
+    public BranchData createProgramViewFromNodeRecursively(Node n, int x, int y, boolean first) {
+        BranchData thisBranch = new BranchData(x, y, 0, 75);
         if (first) {
-            Rectangle r = insertDropTargetAtPosWithSize(x, y - 75, 50, 25);
+            Rectangle r = insertDropTargetAtPosWithSize(x, y, 50, 25);
             targetNodeMap.put(r, n);
             targetFirstMap.put(r, true);
         }
         if (n.getComponent() == null) {
-            return new Point(x, y);
+            return new BranchData(x, y, 0, 75);
         }
         if (n.getComponent().getClass() == DelayComponent.class) {
             // draw delay
@@ -267,29 +268,28 @@ public class Flowduino extends Application {
             // draw loop
             // draw extra targets
             Loop loop = (Loop)n.getComponent();
-            Point loopSize = createProgramViewFromNodeRecursively(loop.getHeadOfContent(), x, y + 75, true);
-            y = loopSize.y;
+            BranchData loopSize = createProgramViewFromNodeRecursively(loop.getHeadOfContent(), thisBranch.x, thisBranch.nextY(), true);
+            thisBranch.width = loopSize.width;
+            thisBranch.height = loopSize.height + 75;
         } else if (n.getComponent().getClass() == IfComponent.class) {
             // draw if
             IfComponent ifComponent = (IfComponent)n.getComponent();
-            Point ifSize = new Point(x, y);
             for (Node ifNode : ifComponent.getHeadOfContents()) {
-                Point ifNodeSize = createProgramViewFromNodeRecursively(ifNode, ifSize.x, y + 75, true);
-                ifSize.x = Math.max(ifNodeSize.x + 100, ifSize.x);
-                ifSize.y = Math.max(ifNodeSize.y, ifSize.y);
+                BranchData ifNodeSize = createProgramViewFromNodeRecursively(ifNode, thisBranch.nextX(), thisBranch.y + 75, true);
+                thisBranch.width += ifNodeSize.width + 100;
+                thisBranch.height = Math.max(ifNodeSize.height + 75, thisBranch.height);
             }
-            y = ifSize.y;
+            thisBranch.width -= 100;
         }
         // make target for after
-        Rectangle r = insertDropTargetAtPosWithSize(x, y, 50, 25);
+        Rectangle r = insertDropTargetAtPosWithSize(thisBranch.x, thisBranch.nextY(), 50, 25);
         targetNodeMap.put(r, n);
         targetFirstMap.put(r, false);
         if (n.getNext() != null) {
-            Point temp = createProgramViewFromNodeRecursively(n.getNext(), x, y + 75, false);
-            x = temp.x;
-            y = temp.y;
+            BranchData temp = createProgramViewFromNodeRecursively(n.getNext(), thisBranch.x, thisBranch.nextY(), false);
+            thisBranch.height += temp.height;
         }
-        return new Point(x, y);
+        return thisBranch;
     }
 
     public void updateProgramViewSize() {
