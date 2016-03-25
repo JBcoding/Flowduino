@@ -1,0 +1,46 @@
+Serial
+    [title]
+        Serial.{function}
+    [variables]
+        int speed
+    [constructor]
+        Servo {name} = Servo({pin})
+    [power]
+        5V
+        GND
+    [functions]
+        begin
+            [description]
+                Speed should be 9600
+            [parameters]
+                int speed
+            [call]
+                Serial.begin({0})
+        read
+            [description]
+                Reads input from Serial
+            [return]
+                int firstByte
+            [call]
+                Serial.read()
+        print
+            [description]
+                Writes String to Serial
+            [parameters]
+                String message
+            [call]
+                Serial.print({0})
+        print
+            [description]
+                Writes String as line to Serial
+            [parameters]
+                String message
+            [call]
+                Serial.println({0})
+        available
+            [description]
+                Checks if bytes are available from Serial stream
+            [return]
+                bool dataAvailable
+            [call]
+                Serial.available()
