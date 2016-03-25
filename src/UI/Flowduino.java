@@ -80,6 +80,7 @@ public class Flowduino extends Application {
                 scrollPane.setMaxHeight(Math.max(1, newSceneHeight.doubleValue() - topBar.getMenu().getHeight()));
                 scrollPane.setMinHeight(Math.max(1, newSceneHeight.doubleValue() - topBar.getMenu().getHeight()));
                 scrollPane.setTranslateX(treeView.getWidth());
+                createProgramViewFromNode(d.getHead());
             }
         });
         scene.widthProperty().addListener(new ChangeListener<Number>() {
@@ -88,6 +89,7 @@ public class Flowduino extends Application {
                 scrollPane.setTranslateX(treeView.getWidth());
                 scrollPane.setMaxWidth(Math.max(1, newSceneWidth.doubleValue() - treeView.getWidth()));
                 scrollPane.setMinWidth(Math.max(1, newSceneWidth.doubleValue() - treeView.getWidth()));
+                createProgramViewFromNode(d.getHead());
             }
         });
 
@@ -235,7 +237,7 @@ public class Flowduino extends Application {
             } else {
                 programView.setMinWidth(Math.max(maxX + 75, scrollPane.getWidth() - 2));
             }
-            return new Point(x, y + 75);
+            return new Point(x, y);
         }
         maxX = Math.max(maxX, x);
         maxY = Math.max(maxY, y);
@@ -251,6 +253,8 @@ public class Flowduino extends Application {
             Loop loop = (Loop)n.getComponent();
 
             Point loopSize = createProgramViewFromNodeRecursively(loop.getHeadOfContent(), x, y + 75, true);
+            x = loopSize.x;
+            y = loopSize.y;
         } else if (n.getComponent().getClass() == IfComponent.class) {
             // draw if
         }
@@ -263,7 +267,7 @@ public class Flowduino extends Application {
             x = temp.x;
             y = temp.y;
         }
-        return new Point(x, y + 75);
+        return new Point(x, y);
     }
 
     public TreeView<String> treeViewFromDocument(Document d) {
