@@ -70,6 +70,11 @@
     -fx-background-image: url("file:images/open.png");
 }
 
+#run-button {
+    -fx-background-image: url("file:images/run.png");
+}
+
+
 .icon-menu-button:hover {
     -fx-opacity: .8;
 }
@@ -81,6 +86,18 @@
     -fx-background-insets: 0, 0;
 }
 
+.target-no-block {
+    -fx-fill: #1d2022;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 13, 0.6, 0, 0);
+    -fx-opacity: .3;
+}
+
+.target-block {
+    -fx-fill: #1d2022;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 13, 0.6, 0, 0);
+    -fx-opacity: .5;
+
+}
 
 
 .corner {
@@ -112,3 +129,17 @@
     -fx-padding: 0;
 }
 
+.context-menu {
+    -fx-background-color: #2b2b2b;
+    -fx-padding: 1;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 5, 5;
+}
+
+.menu-item .label {
+    -fx-text-fill: #b3bab5;
+}
+
+.menu-item:focused {
+    -fx-background-color: #3c3f41;
+}

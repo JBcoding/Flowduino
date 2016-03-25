@@ -1,5 +1,5 @@
 import javafx.application.Application;
-import javafx.event.EventHandler;
+import javafx.event.*;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -36,6 +36,7 @@ public class Flowduino extends Application {
     protected Document d = new Document();
     protected Button saveButton;
     protected Button openButton;
+    protected Button runButton;
     protected IconMenu topBar;
     protected Pane programView;
     protected ScrollPane scrollPane;
@@ -59,14 +60,32 @@ public class Flowduino extends Application {
         scene.getStylesheets().add("style.css");
         scene.setFill(Color.valueOf("#3c3f41"));
 
+        final ContextMenu contextMenu = new ContextMenu();
+        MenuItem cut = new MenuItem("Cut");
+        MenuItem copy = new MenuItem("Copy");
+        MenuItem paste = new MenuItem("Paste");
+        contextMenu.getItems().addAll(cut, copy, paste);
+        cut.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Cut...");
+            }
+        });
 
         saveButton = new Button();
         saveButton.setId("save-button");
+        saveButton.setTooltip(new Tooltip("Save file"));
+        saveButton.setContextMenu(contextMenu);
 
         openButton = new Button();
         openButton.setId("open-button");
+        openButton.setTooltip(new Tooltip("Open Project"));
 
-        topBar = new IconMenu(saveButton, openButton);
+        runButton = new Button();
+        runButton.setId("run-button");
+        runButton.setTooltip(new Tooltip("Compile to Arduino"));
+
+        topBar = new IconMenu(saveButton, openButton, runButton);
 
         programView = new Pane();
         programView.setId("program-view");
@@ -111,6 +130,8 @@ public class Flowduino extends Application {
         stage.setScene(scene);
         stage.setHeight(601);
         stage.setWidth(601);
+        stage.setMaximized(true);
+        stage.getIcons().add(new Image("file:images/save.png"));
         stage.show();
 
 
@@ -374,12 +395,12 @@ public class Flowduino extends Application {
         VBox buttonBox = new VBox();
         buttonBox.setId("button-box");
         Button buttonSettings = new Button("Settings");
-        Button buttonVariabels = new Button("Variabels");
+        Button buttonVariables = new Button("Variables");
         Button buttonObjects = new Button("Connections");
         buttonSettings.getStyleClass().add("buttons");
-        buttonVariabels.getStyleClass().add("buttons");
+        buttonVariables.getStyleClass().add("buttons");
         buttonObjects.getStyleClass().add("buttons");
-        buttonBox.getChildren().addAll(buttonSettings, buttonVariabels, buttonObjects);
+        buttonBox.getChildren().addAll(buttonSettings, buttonVariables, buttonObjects);
         return buttonBox;
     }
 }
