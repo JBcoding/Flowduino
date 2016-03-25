@@ -67,6 +67,12 @@
     -fx-background-color: #3c3f41;
 }
 
+
+
+.corner {
+    -fx-background-color: #3c3f41;
+}
+
 .scroll-bar:vertical {
     -fx-pref-width: 10px;
 
@@ -77,10 +83,15 @@
 
 
 
-.scroll-bar > .track, .scroll-bar > .decrement-button, .scroll-bar > .increment-button {
-    -fx-opacity: 0;
+.scroll-bar > .track {
+    visibility: hidden;
 }
-.scroll-bar:vertical > .thumb {
+.scroll-bar > .thumb {
     -fx-opacity: 1;
     -fx-background-color: #555c57;
+}
+
+#program-view {
+    -fx-background-image: url("images/background.png");
+    -fx-background-repeat: repeat;
 }
