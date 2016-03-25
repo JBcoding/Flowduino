@@ -1,0 +1,31 @@
+.menu-bar {
+
+}
+.tree-cell {
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #b3bab5;
+}
+.tree-cell > .tree-disclosure-node > .arrow {
+    -fx-background-color: #acacac;
+}
+
+.tree-view {
+    -fx-max-width: 200px;
+    -fx-wrap-text: true;
+}
+
+#button-box {
+    -fx-pref-width: 200px;
+}
+.buttons {
+    -fx-pref-width: 200px;
+    -fx-background-color: #3c3f41;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+    -fx-border-radius: 0;
+    -fx-border-style: none;
+}
+.buttons {
+
+}

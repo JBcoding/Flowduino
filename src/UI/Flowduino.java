@@ -26,7 +26,7 @@ import java.nio.BufferUnderflowException;
 public class Flowduino extends Application {
 
     protected Group root;
-    protected HBox buttonBox;
+    protected VBox buttonBox;
 
     @Override 
     public void start(Stage stage) {
@@ -43,7 +43,23 @@ public class Flowduino extends Application {
 
         treeView.setPrefHeight(600);
         Scene scene = new Scene(root, 600, 600);
+        scene.getStylesheets().add("style.css");
         scene.setFill(Color.LIGHTGREEN);
+
+        MenuBar menuBar = new MenuBar();
+
+        // --- Menu File
+        Menu menuFile = new Menu("File");
+
+        // --- Menu Edit
+        Menu menuEdit = new Menu("Edit");
+
+        // --- Menu View
+        Menu menuView = new Menu("View");
+
+        menuBar.getMenus().addAll(menuFile, menuEdit, menuView);
+
+        ((Group) scene.getRoot()).getChildren().addAll(menuBar);
 
         scene.heightProperty().addListener(new ChangeListener<Number>() {
             @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
@@ -211,8 +227,8 @@ public class Flowduino extends Application {
         return treeView;
     }
 
-    public HBox createButtonBox() {
-        HBox buttonBox = new HBox();
+    public VBox createButtonBox() {
+        VBox buttonBox = new VBox();
         buttonBox.setId("button-box");
         Button buttonSettings = new Button("Settings");
         Button buttonVariabels = new Button("Variabels");
