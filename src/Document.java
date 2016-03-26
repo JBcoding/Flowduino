@@ -6,6 +6,7 @@ public class Document implements Serializable {
     protected Variables variables = new Variables();
     protected Node head = new Node();
     protected String name;
+    protected boolean savedSinceLastChange;
 
     public Document() {
         reloadPeripherals();
@@ -47,5 +48,13 @@ public class Document implements Serializable {
 
     public String getName() {
         return name;
+    }
+
+    public void setSavedSinceLastChange(boolean b) {
+        savedSinceLastChange = b;
+    }
+
+    public boolean getSavedSinceLastChange() {
+        return savedSinceLastChange;
     }
 }

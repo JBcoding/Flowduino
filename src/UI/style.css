@@ -59,7 +59,9 @@
     -fx-pref-height: 29px;
     -fx-border-width: 0;
     -fx-border-color: transparent;
-    -fx-background-size: stretch;
+    -fx-background-size: 25px 25px;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
     -fx-background-color: #555c57;
 }
 #save-button {
@@ -74,6 +76,13 @@
     -fx-background-image: url("file:images/run.png");
 }
 
+#save-as-button {
+    -fx-background-image: url("file:images/saveAs.png");
+}
+
+#new-document-button {
+    -fx-background-image: url("file:images/new.png");
+}
 
 .icon-menu-button:hover {
     -fx-opacity: .8;
@@ -151,4 +160,9 @@
 .dialog-pane {
     -fx-background-color: red;
     -fx-padding: 0;
+}
+
+.line {
+    -fx-stroke: #232323;
+    -fx-stroke-width: 5px;
 }

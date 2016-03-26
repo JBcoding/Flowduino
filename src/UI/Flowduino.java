@@ -1,7 +1,5 @@
-import com.sun.org.apache.bcel.internal.generic.POP;
 import javafx.application.Application;
 import javafx.event.*;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,27 +8,19 @@ import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.application.Application;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.WindowEvent;
 import javafx.util.*;
-import javafx.beans.property.*;
-import javafx.beans.*;
 import javafx.beans.value.*;
 
-import java.awt.Point;
 import java.io.*;
-import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Demonstrates a drag-and-drop feature.
@@ -41,7 +31,9 @@ public class Flowduino extends Application {
     protected VBox buttonBox;
     protected Document d = new Document();
     protected Button saveButton;
+    protected Button saveAsButton;
     protected Button openButton;
+    protected Button newDocumentButton;
     protected Button runButton;
     protected IconMenu topBar;
     protected Pane programView;
@@ -92,6 +84,28 @@ public class Flowduino extends Application {
         saveButton.setTooltip(new Tooltip("Save file"));
         saveButton.setContextMenu(contextMenu);
 
+        saveAsButton = new Button();
+        saveAsButton.setId("save-as-button");
+        saveAsButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                saveAs();
+            }
+        });
+        saveAsButton.setTooltip(new Tooltip("Save As"));
+
+
+        newDocumentButton = new Button();
+        newDocumentButton.setId("new-document-button");
+        newDocumentButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                newFile();
+            }
+        });
+        newDocumentButton.setTooltip(new Tooltip("New Document"));
+
+
         openButton = new Button();
         openButton.setId("open-button");
         openButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -106,7 +120,7 @@ public class Flowduino extends Application {
         runButton.setId("run-button");
         runButton.setTooltip(new Tooltip("Compile to Arduino"));
 
-        topBar = new IconMenu(saveButton, openButton, runButton);
+        topBar = new IconMenu(saveButton, saveAsButton,newDocumentButton , openButton, runButton);
 
         programView = new Pane();
         programView.setId("program-view");
@@ -156,29 +170,33 @@ public class Flowduino extends Application {
         stage.setMaximized(true);
         stage.getIcons().add(new Image("file:images/save.png"));
         stage.show();
+
+        scene.setOnKeyPressed((KeyEvent evt)->{
+            if ((evt.isControlDown() || evt.isMetaDown())//meta for Mac
+                    && evt.getCode() == KeyCode.O){
+                openFile();
+            } else if ((evt.isControlDown() || evt.isMetaDown())//meta for Mac
+                    && evt.getCode() == KeyCode.S && evt.isShiftDown()) {
+                saveAs();
+            } else if ((evt.isControlDown() || evt.isMetaDown())//meta for Mac
+                    && evt.getCode() == KeyCode.S){
+                saveFile();
+            }
+
+        });
+
         scene.getWindow().setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(WindowEvent ev) {
-                if (d.getHead().getComponent() != null) {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Confirm exiting");
-                    alert.setHeaderText("Are you sure you want to exit?");
-                    alert.setContentText("Do you want to save before quitting?");
-
-                    ButtonType buttonTypeOne = new ButtonType("Save and exit");
-                    ButtonType buttonTypeTwo = new ButtonType("Exit without saving");
-                    ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-                    alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
-
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == buttonTypeOne){
-                        if (!saveFile()) {
+                if (d.getHead().getComponent() != null && !d.getSavedSinceLastChange()) {
+                    switch (AlertBox.show("Confirm quitting", "Save before exiting?", "")) {
+                        case BUTTON_OK:
+                            saveFile();
+                            break;
+                        case BUTTON_NO:
+                            break;
+                        case BUTTON_CANCEL:
                             ev.consume();
-                        }
-                    } else if (result.get() == buttonTypeTwo) {
-                        // ... user chose "Two"
-                    } else {
-                        ev.consume();
+                            break;
                     }
                 }
             }
@@ -240,6 +258,7 @@ public class Flowduino extends Application {
 
         target.setOnDragDropped(new EventHandler <DragEvent>() {
             public void handle(DragEvent event) {
+                d.setSavedSinceLastChange(false);
                 /* data dropped */
                 /* if there is a string data on dragboard, read it and use it */
                 Dragboard db = event.getDragboard();
@@ -297,8 +316,6 @@ public class Flowduino extends Application {
 
     public void drawLine(int startX, int startY, int endX, int endY) {
         Line line = new Line(startX, startY, endX, endY);
-        line.setFill(Color.PINK);
-        line.setStrokeWidth(10);
         line.toBack();
         line.setDisable(true);
         line.getStyleClass().add("line");
@@ -485,7 +502,15 @@ public class Flowduino extends Application {
         buttonBox.getChildren().addAll(buttonSettings, buttonVariables, buttonObjects);
         return buttonBox;
     }
-
+    public boolean saveAs() {
+        String oldName = d.getName();
+        d.setName(null);
+        if (!saveFile()) {
+            d.setName(oldName);
+            return false;
+        }
+        return true;
+    }
 
     public boolean saveFile() {
         if (d.getName() == null) {
@@ -498,6 +523,7 @@ public class Flowduino extends Application {
                     fileName += ".fdi";
                 }
                 d.setName(fileName);
+
             } else {
                 return false;
             }
@@ -508,6 +534,8 @@ public class Flowduino extends Application {
             out.writeObject(d);
             out.close();
             fileOut.close();
+            d.setSavedSinceLastChange(true);
+
         } catch (Exception e) {
             System.out.println("Save failed");
             e.printStackTrace();
@@ -516,6 +544,9 @@ public class Flowduino extends Application {
     }
 
     public void openFile() {
+        if (!checkSaved("Confirm opening file", "Do you want to save your document before opening another?")) {
+            return;
+        }
         final FileChooser fileChooser = new FileChooser();
         configureFileChooser(fileChooser);
         File file = fileChooser.showOpenDialog(stage);
@@ -531,8 +562,35 @@ public class Flowduino extends Application {
 
             }
             d.reloadPeripherals();
+            d.setSavedSinceLastChange(true);
             createProgramViewFromNode(d.getHead());
         }
+    }
+
+    public void newFile() {
+        if (!checkSaved("Confirm creating new file", "Do you want to save your document before creating a new one?")) {
+            return;
+        }
+        d = new Document();
+        d.reloadPeripherals();
+        createProgramViewFromNode(d.getHead());
+    }
+
+    public boolean checkSaved(String title, String message) {
+        if (!d.getSavedSinceLastChange()) {
+            switch (AlertBox.show(title, message, "")) {
+                case BUTTON_OK:
+                    if (!saveFile()) {
+                        return false;
+                    }
+                    return true;
+                case BUTTON_NO:
+                    return true;
+                case BUTTON_CANCEL:
+                    return false;
+            }
+        }
+        return false;
     }
 
     private static void configureFileChooser(final FileChooser fileChooser) {
