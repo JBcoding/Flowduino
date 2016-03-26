@@ -8,4 +8,10 @@ public abstract class Loop implements IComponent {
     public Node getHeadOfContent() {
         return headOfContent;
     }
+
+    public boolean isNodeSubNode(Node n) {
+        return headOfContent.isNodeSubNode(n);
+    }
+
+    public abstract IComponent clone();
 }

@@ -5,4 +5,6 @@ import java.io.Serializable;
  */
 public interface IComponent extends Serializable {
     String toCode(int tabDepth);
+
+    IComponent clone();
 }

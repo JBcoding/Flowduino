@@ -1,3 +1,5 @@
+import javax.lang.model.element.VariableElement;
+
 /**
  * Created by mathias on 23/03/16.
  */
@@ -74,5 +76,12 @@ public class ForLoop extends Loop {
         code += headOfContent.getProgramCode(tabDepth + Settings.getTabDepth());
         code += "\n" + tab + "}";
         return code;
+    }
+
+    @Override
+    public IComponent clone() {
+        ForLoop fl = new ForLoop((Variable)counter.clone(), (IValues)startValue.clone(), (IValues)endValue.clone(), (IValues)step.clone());
+        fl.setHeadOfContent(headOfContent.clone());
+        return fl;
     }
 }

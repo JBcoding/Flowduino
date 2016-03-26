@@ -47,4 +47,11 @@ public class DelayComponent implements IComponent {
         }
         return code.substring(0, code.length()-1);
     }
+
+    @Override
+    public IComponent clone() {
+        DelayComponent dc = new DelayComponent();
+        dc.setDelayMicroseconds(delayMicroseconds);
+        return dc;
+    }
 }

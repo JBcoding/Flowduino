@@ -25,4 +25,27 @@ public class IfComponent extends ConditionalExecution {
         }
         return code;
     }
+
+    public boolean isNodeSubNode(Node n) {
+        for (Node thisNode : headOfContents) {
+            if (thisNode.isNodeSubNode(n)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public IComponent clone() {
+        List<Node> newHeadOfContents = new ArrayList<>();
+        for (Node n : headOfContents) {
+            newHeadOfContents.add(n.clone());
+        }
+        List<ICase> newCases = new ArrayList<>();
+        for (ICase c : cases) {
+            newCases.add(c.clone());
+        }
+        return new IfComponent(newHeadOfContents, newCases);
+    }
+
+
 }

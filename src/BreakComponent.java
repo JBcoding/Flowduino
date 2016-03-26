@@ -6,4 +6,9 @@ public class BreakComponent implements IComponent {
     public String toCode(int tabDepth) {
         return Settings.getTabString(tabDepth) + "break;";
     }
+
+    @Override
+    public IComponent clone() {
+        return new BreakComponent();
+    }
 }

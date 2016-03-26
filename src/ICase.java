@@ -1,5 +1,7 @@
 import java.io.Serializable;
 
 public interface ICase extends Serializable {
-    public String toCode();
+    String toCode();
+
+    ICase clone();
 }

@@ -1,3 +1,7 @@
+import sun.jvm.hotspot.memory.Generation;
+
+import java.awt.datatransfer.Clipboard;
+
 /**
  * Created by mathias on 23/03/16.
  */
@@ -17,5 +21,10 @@ public class Constant implements IValues {
     @Override
     public String toCode() {
         return value;
+    }
+
+    @Override
+    public ICase clone() {
+        return new Constant(new String(value));
     }
 }

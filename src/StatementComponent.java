@@ -53,4 +53,15 @@ public class StatementComponent implements IComponent{
         }
         return code.substring(0, code.length()-1);
     }
+
+    @Override
+    public IComponent clone() {
+        StatementComponent sc = new StatementComponent(variables);
+        try {
+            sc.setValue(new String(value));
+        } catch (MalformedExpressionException e) {
+            e.printStackTrace();
+        }
+        return sc;
+    }
 }

@@ -1,3 +1,5 @@
+import java.awt.datatransfer.*;
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -45,4 +47,26 @@ public class Node implements Serializable {
         }
     }
 
+    public Node clone() {
+        if (component != null) {
+            return new Node(component.clone(), next);
+        }
+        return new Node();
+    }
+
+    public boolean isNodeSubNode(Node n) {
+        if (n == this) {
+            return true;
+        }
+        if (component != null) {
+            if (component.getClass() == IfComponent.class) {
+                IfComponent ifComponent = (IfComponent)component;
+                return ifComponent.isNodeSubNode(n);
+            } else if (component.getClass() == ForLoop.class || component.getClass() == WhileLoop.class) {
+                Loop loop = (Loop)component;
+                return loop.isNodeSubNode(n);
+            }
+        }
+        return false;
+    }
 }

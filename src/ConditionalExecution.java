@@ -6,4 +6,6 @@ public abstract class ConditionalExecution implements IComponent {
     public List<Node> getHeadOfContents() {
         return headOfContents;
     }
+
+    public abstract IComponent clone();
 }

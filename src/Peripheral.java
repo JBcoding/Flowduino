@@ -10,6 +10,7 @@ public class Peripheral implements Serializable {
     protected List<Variable> variables;
     protected List<String> otherConnections;
     protected String constructor;
+    protected String setupConstructor;
     protected List<PeripheralFunction> functions;
 
     public Peripheral(String path) {
@@ -55,6 +56,8 @@ public class Peripheral implements Serializable {
                 }
             } else if (line.equals("[constructor]")) {
                 constructor = lines.poll();
+            } else if (line.equals("[setupConstructor]")) {
+                setupConstructor = lines.poll();
             } else if (line.equals("[functions]")) {
                 while (lines.size() > 0 && lines.peek().indexOf("[") == -1) {
                     functions.add(new PeripheralFunction(lines));

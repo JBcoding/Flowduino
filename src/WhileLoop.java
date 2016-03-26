@@ -23,4 +23,11 @@ public class WhileLoop extends Loop {
         code += "\n" + tab + "}";
         return code;
     }
+
+    @Override
+    public IComponent clone() {
+        WhileLoop wl = new WhileLoop(condition.clone());
+        wl.setHeadOfContent(headOfContent.clone());
+        return wl;
+    }
 }

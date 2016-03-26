@@ -8,7 +8,7 @@ LED
     [power]
         5V
         GND
-    [constructor]
+    [setupConstructor]
         PinMode({pin}, output)
     [functions]
         TurnOn 

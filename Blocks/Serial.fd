@@ -3,15 +3,13 @@ Serial
         Serial.{function}
     [variables]
         int speed
-    [constructor]
-        Servo {name} = Servo({pin})
     [power]
         5V
         GND
     [functions]
         begin
             [description]
-                Speed should be 9600
+                Speed should be 9600 (place in setup)
             [parameters]
                 int speed
             [call]

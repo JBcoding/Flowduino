@@ -25,4 +25,8 @@ public class Case implements ICase {
     public String toCode() {
         return "(" + leftSide.toCode() + ") " + operator + " (" + rightSide.toCode() + ")";
     }
+
+    public ICase clone() {
+        return new Case(leftSide.clone(), rightSide.clone(), new String(operator));
+    }
 }

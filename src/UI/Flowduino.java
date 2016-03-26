@@ -3,6 +3,7 @@ import javafx.event.*;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
@@ -17,6 +18,8 @@ import javafx.stage.WindowEvent;
 import javafx.util.*;
 import javafx.beans.value.*;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +42,8 @@ public class Flowduino extends Application {
     protected Pane programView;
     protected ScrollPane scrollPane;
     protected Stage stage;
+
+    protected Node clipboard;
 
     protected HashMap<Rectangle, Node> targetNodeMap = new HashMap<>();
     protected HashMap<Rectangle, Boolean> targetFirstMap = new HashMap<>();
@@ -212,6 +217,38 @@ public class Flowduino extends Application {
     public Rectangle insertDropTargetAtPosWithSize(int x, int y, int width, int height) {
         final Rectangle target = new Rectangle(x, y, width, height);
         target.toFront();
+        final ContextMenu contextMenu = new ContextMenu();
+        MenuItem paste = new MenuItem("paste");
+        contextMenu.getItems().addAll(paste);
+        paste.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (clipboard != null) {
+                    Node n = targetNodeMap.get(target);
+                    if (n == clipboard || !clipboard.isNodeSubNode(n)) {
+                        boolean b = targetFirstMap.get(target);
+                        if (b) {
+                            Node newNode = new Node(n.getComponent(), n.getNext());
+                            n.setComponent(clipboard.getComponent());
+                            n.setNext(newNode);
+                        } else {
+                            n.setNext(new Node(clipboard.getComponent(), n.getNext()));
+                        }
+                        createProgramViewFromNode(d.getHead());
+                    } else {
+                        AlertBox.info("Inception detected", "You cannot place a block within itself", Alert.AlertType.ERROR);
+                    }
+                }
+            }
+        });
+        target.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.isSecondaryButtonDown()) {
+                    contextMenu.show(target, event.getScreenX(), event.getScreenY());
+                }
+            }
+        });
         maxX = Math.max(maxX, x);
         maxY = Math.max(maxY, y);
         target.getStyleClass().add("target-no-block");
@@ -315,7 +352,7 @@ public class Flowduino extends Application {
     }
 
     public void drawLine(int startX, int startY, int endX, int endY) {
-        Line line = new Line(startX, startY, endX, endY);
+        Line line = new Line(startX + 1, startY + 1, endX + 1, endY + 1);
         line.toBack();
         line.setDisable(true);
         line.getStyleClass().add("line");
@@ -326,7 +363,7 @@ public class Flowduino extends Application {
         drawLine(startX + targetWidth / 2, startY + targetHeight / 2, endX + targetWidth / 2, endY + targetHeight / 2);
     }
 
-    private int targetWidth = 75;
+    private int targetWidth = 100;
     private int targetHeight = 25;
     private int blockHeight = 50;
     private int xSpaceBetweenTargets = 50;
@@ -369,24 +406,24 @@ public class Flowduino extends Application {
         }
         if (n.getComponent().getClass() == DelayComponent.class) {
             // draw delay
-            drawBlock(x, y, "delay-block");
+            drawBlock(x, y, "delay-block", n);
         } else if (n.getComponent().getClass() == BreakComponent.class) {
             // draw break
-            drawBlock(x, y, "break-block");
+            drawBlock(x, y, "break-block", n);
         } else if (n.getComponent().getClass() == StatementComponent.class) {
             // draw statement
-            drawBlock(x, y, "statement-block");
+            drawBlock(x, y, "statement-block", n);
         } else if (n.getComponent().getClass() == ForLoop.class || n.getComponent().getClass() == WhileLoop.class) {
             // draw loop
-            drawBlock(x, y, "loop-block");
+            drawBlock(x, y, "loop-block", n);
             // draw extra targets
             Loop loop = (Loop)n.getComponent();
             BranchData loopSize = createProgramViewFromNodeRecursively(loop.getHeadOfContent(), thisBranch.x, thisBranch.nextY(), true);
             thisBranch.width = loopSize.width;
             thisBranch.height = loopSize.height + blockHeight + targetHeight;
-            drawBlock(x, thisBranch.nextY() - targetHeight - blockHeight, "loop-end-block");
+            drawBlock(x, thisBranch.nextY() - targetHeight - blockHeight, "loop-end-block", n);
         } else if (n.getComponent().getClass() == IfComponent.class) {
-            drawBlock(x, y, "if-case");
+            drawBlock(x, y, "if-case", n);
             // draw if
             IfComponent ifComponent = (IfComponent)n.getComponent();
             List<BranchData> ifNodeSize = new ArrayList<>();
@@ -405,7 +442,7 @@ public class Flowduino extends Application {
             int height2 = thisBranch.y + thisBranch.height - (blockHeight / 2 + targetHeight / 2);
             drawLineBetweenTargets(thisBranch.x, height1, thisBranch.nextX() - ifNodeSize.get(ifNodeSize.size() - 1).width, height1);
             drawLineBetweenTargets(thisBranch.x, height2, thisBranch.nextX() - ifNodeSize.get(ifNodeSize.size() - 1).width, height2);
-            drawBlock(x, thisBranch.nextY() - targetHeight - blockHeight, "if-end-block");
+            drawBlock(x, thisBranch.nextY() - targetHeight - blockHeight, "if-end-block", n);
         }
         // make target for after
         Rectangle r = insertDropTargetAtPosWithSize(thisBranch.x, thisBranch.nextY(), targetWidth, targetHeight);
@@ -415,6 +452,7 @@ public class Flowduino extends Application {
             drawLineBetweenTargets(thisBranch.x, thisBranch.y, thisBranch.x, thisBranch.nextY());
             BranchData temp = createProgramViewFromNodeRecursively(n.getNext(), thisBranch.x, thisBranch.nextY(), false);
             thisBranch.height += temp.height;
+            thisBranch.width += temp.width;
         }
         return thisBranch;
     }
@@ -610,14 +648,57 @@ public class Flowduino extends Application {
         );
     }
 
-    public void drawBlock(int x, int y, String blocktype) {
+    public void drawBlock(int x, int y, String blocktype, Node n) {
         Pane p = new Pane();
         p.setTranslateX(x);
         p.setTranslateY(y + targetHeight);
         p.setPrefHeight(blockHeight);
         p.setPrefWidth(targetWidth);
+        final ContextMenu contextMenu = new ContextMenu();
+        MenuItem cut = new MenuItem("Cut");
+        MenuItem copy = new MenuItem("Copy");
+        MenuItem delete = new MenuItem("Delete");
+        contextMenu.getItems().addAll(cut, copy, delete);
+        delete.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                deleteNodeFromTree(n);
+            }
+        });
+        copy.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                clipboard = n.clone();
+            }
+        });
+        cut.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                clipboard = n.clone();
+                deleteNodeFromTree(n);
+            }
+        });
+        p.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.isSecondaryButtonDown()) {
+                    contextMenu.show(p, event.getScreenX(), event.getScreenY());
+                }
+            }
+        });
         p.getStyleClass().add(blocktype);
         p.getStyleClass().add("block-image");
         programView.getChildren().add(p);
+    }
+
+    public void deleteNodeFromTree(Node n) {
+        if (n.getNext() != null) {
+            n.setComponent(n.getNext().getComponent());
+            n.setNext(n.getNext().getNext());
+        } else {
+            n.setComponent(null);
+            n.setNext(null);
+        }
+        createProgramViewFromNode(d.getHead());
     }
 }

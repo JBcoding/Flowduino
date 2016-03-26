@@ -77,4 +77,9 @@ public class Variable implements IValues {
         }
         return type + " FV_" + name + " = " + startValue + ";";
     }
+
+    @Override
+    public ICase clone() {
+        return this;
+    }
 }
