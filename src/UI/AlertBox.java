@@ -31,7 +31,7 @@ public final class AlertBox {
         }
     }
 
-    public void info(String title, String content) {
+    public static void info(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(content);
