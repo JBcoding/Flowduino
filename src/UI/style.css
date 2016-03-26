@@ -152,3 +152,35 @@
     -fx-background-color: red;
     -fx-padding: 0;
 }
+
+.if-case {
+    -fx-background-image: url("file:images/If.png");
+}
+
+.delay-block {
+    -fx-background-image: url("file:images/Delay.png");
+}
+
+.break-block {
+    -fx-background-image: url("file:images/Break.png");
+}
+
+.statement-block {
+    -fx-background-image: url("file:images/Statement.png");
+}
+
+.loop-end-block {
+    -fx-background-image: url("file:images/Endloop.png");
+}
+
+.loop-block {
+    -fx-background-image: url("file:images/Loop.png");
+}
+
+.if-end-block {
+    -fx-background-image: url("file:images/Endif.png");
+}
+
+.block-image {
+    -fx-background-size: stretch;
+}

@@ -302,7 +302,7 @@ public class Flowduino extends Application {
         line.toBack();
         line.setDisable(true);
         line.getStyleClass().add("line");
-        programView.getChildren().add(line);
+        programView.getChildren().add(0, line);
     }
 
     public void drawLineBetweenTargets(int startX, int startY, int endX, int endY) {
@@ -352,18 +352,24 @@ public class Flowduino extends Application {
         }
         if (n.getComponent().getClass() == DelayComponent.class) {
             // draw delay
+            drawBlock(x, y, "delay-block");
         } else if (n.getComponent().getClass() == BreakComponent.class) {
             // draw break
+            drawBlock(x, y, "break-block");
         } else if (n.getComponent().getClass() == StatementComponent.class) {
             // draw statement
+            drawBlock(x, y, "statement-block");
         } else if (n.getComponent().getClass() == ForLoop.class || n.getComponent().getClass() == WhileLoop.class) {
             // draw loop
+            drawBlock(x, y, "loop-block");
             // draw extra targets
             Loop loop = (Loop)n.getComponent();
             BranchData loopSize = createProgramViewFromNodeRecursively(loop.getHeadOfContent(), thisBranch.x, thisBranch.nextY(), true);
             thisBranch.width = loopSize.width;
             thisBranch.height = loopSize.height + blockHeight + targetHeight;
+            drawBlock(x, thisBranch.nextY() - targetHeight - blockHeight, "loop-end-block");
         } else if (n.getComponent().getClass() == IfComponent.class) {
+            drawBlock(x, y, "if-case");
             // draw if
             IfComponent ifComponent = (IfComponent)n.getComponent();
             List<BranchData> ifNodeSize = new ArrayList<>();
@@ -382,6 +388,7 @@ public class Flowduino extends Application {
             int height2 = thisBranch.y + thisBranch.height - (blockHeight / 2 + targetHeight / 2);
             drawLineBetweenTargets(thisBranch.x, height1, thisBranch.nextX() - ifNodeSize.get(ifNodeSize.size() - 1).width, height1);
             drawLineBetweenTargets(thisBranch.x, height2, thisBranch.nextX() - ifNodeSize.get(ifNodeSize.size() - 1).width, height2);
+            drawBlock(x, thisBranch.nextY() - targetHeight - blockHeight, "if-end-block");
         }
         // make target for after
         Rectangle r = insertDropTargetAtPosWithSize(thisBranch.x, thisBranch.nextY(), targetWidth, targetHeight);
@@ -543,5 +550,16 @@ public class Flowduino extends Application {
         fileChooser.getExtensionFilters().addAll(
             new FileChooser.ExtensionFilter("Flowduino file (*.fdi)", "*.fdi")
         );
+    }
+
+    public void drawBlock(int x, int y, String blocktype) {
+        Pane p = new Pane();
+        p.setTranslateX(x);
+        p.setTranslateY(y + targetHeight);
+        p.setPrefHeight(blockHeight);
+        p.setPrefWidth(targetWidth);
+        p.getStyleClass().add(blocktype);
+        p.getStyleClass().add("block-image");
+        programView.getChildren().add(p);
     }
 }
