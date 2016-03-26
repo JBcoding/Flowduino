@@ -1,6 +1,7 @@
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TitledPane;
 
 import java.util.Optional;
 
@@ -28,5 +29,14 @@ public final class AlertBox {
         } else {
             return AlertResponse.BUTTON_CANCEL;
         }
+    }
+
+    public void info(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(content);
+        alert.setContentText("");
+
+        alert.showAndWait();
     }
 }
