@@ -105,6 +105,6 @@ public class TestNode {
         Node tail = new Node(delay2);
         Node head = new Node(delay1, tail);
 
-        assertEquals(head.getProgramCode(2), delay1.toCode(2) + "\n\n\n\n\n" + delay2.toCode(2));
+        assertEquals(head.getProgramCode(2), delay1.toCode(2) + "\n\n" + delay2.toCode(2));
     }
 }

@@ -116,8 +116,11 @@ public class VariablesMenu extends Stage {
         ObservableList<String> variableTypes = FXCollections.observableArrayList(
                 "String",
                 "int",
-                "long"
+                "long",
+                "float",
+                "double"
         );
+
         final ComboBox comboBox = new ComboBox(variableTypes);
         String varType = v.getType();
         switch (varType) {
