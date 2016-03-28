@@ -48,4 +48,24 @@ public class PeripheralFunction implements Serializable {
     public String getName() {
         return name;
     }
+
+    public List<Variable> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(List<Variable> parameters) {
+        this.parameters = parameters;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Variable getReturnVar() {
+        return returnVar;
+    }
+
+    public void setReturnVar(Variable returnVar) {
+        this.returnVar = returnVar;
+    }
 }
