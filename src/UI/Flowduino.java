@@ -50,7 +50,7 @@ public class Flowduino extends Application {
     protected VariablesMenu variablesMenu;
 
     protected Node clipboard;
-    protected Node nodeToMove;
+    protected Node toMove;
 
     protected HashMap<Rectangle, Node> targetNodeMap = new HashMap<>();
     protected HashMap<Rectangle, Boolean> targetFirstMap = new HashMap<>();
@@ -336,9 +336,12 @@ public class Flowduino extends Application {
                     IfComponent ifComponent = new IfComponent(nodes, cases);
                     newComponent = ifComponent;
                 } else if (db.getString().equals("NodeMove")) {
-                    if (insertNodeReletiveToNode(n, nodeToMove, b)) {
-                        deleteNodeFromTree(nodeToMove);
-                        nodeToMove = null;
+                    Node nodeToMove = toMove;
+                    if (nodeToMove == null) {
+                        nodeToMove = loadNode(db.getFiles().get(0));
+                    }
+                    if (nodeToMove != null && insertNodeReletiveToNode(n, nodeToMove, b) && toMove != null) {
+                        deleteNodeFromTree(toMove);
                     }
                 }
                 if (newComponent != null) {
@@ -601,7 +604,6 @@ public class Flowduino extends Application {
             out.close();
             fileOut.close();
             d.setSavedSinceLastChange(true);
-
         } catch (Exception e) {
             System.out.println("Save failed");
             e.printStackTrace();
@@ -712,11 +714,24 @@ public class Flowduino extends Application {
                         /* put a string on dragboard */
                 ClipboardContent content = new ClipboardContent();
                 content.putString("NodeMove");
+                try {
+                    File temp = File.createTempFile("clipboard", ".tmp");
+                    saveNode(temp, n);
+                    toMove = n;
+                    content.putFiles(new ArrayList<File>(){{add(temp);}});
+
+                } catch(IOException e) {
+                    e.printStackTrace();
+                }
                 db.setContent(content);
 
-                nodeToMove = n;
-
                 mouseEvent.consume();
+            }
+        });
+        p.setOnDragDone(new EventHandler<DragEvent>() {
+            @Override
+            public void handle(DragEvent mouseEvent) {
+                toMove = null;
             }
         });
         p.getStyleClass().add(blocktype);
@@ -750,5 +765,31 @@ public class Flowduino extends Application {
             AlertBox.info("Inception detected", "You cannot place a block within itself", Alert.AlertType.ERROR);
             return false;
         }
+    }
+
+    public void saveNode(File f, Node n) {
+        try {
+            FileOutputStream fileOut = new FileOutputStream(f.getAbsoluteFile());
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(n);
+            out.close();
+            fileOut.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Node loadNode(File f) {
+        try {
+            FileInputStream fileIn = new FileInputStream(f.getAbsoluteFile());
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            Node n = (Node)in.readObject();
+            in.close();
+            fileIn.close();
+            return n;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
