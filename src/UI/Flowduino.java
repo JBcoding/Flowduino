@@ -50,6 +50,7 @@ public class Flowduino extends Application {
     protected VariablesMenu variablesMenu;
 
     protected Node clipboard;
+    protected Node nodeToMove;
 
     protected HashMap<Rectangle, Node> targetNodeMap = new HashMap<>();
     protected HashMap<Rectangle, Boolean> targetFirstMap = new HashMap<>();
@@ -236,19 +237,9 @@ public class Flowduino extends Application {
             public void handle(ActionEvent event) {
                 if (clipboard != null) {
                     Node n = targetNodeMap.get(target);
-                    if (n == clipboard || !clipboard.isNodeSubNode(n)) {
-                        boolean b = targetFirstMap.get(target);
-                        if (b) {
-                            Node newNode = new Node(n.getComponent(), n.getNext());
-                            n.setComponent(clipboard.getComponent());
-                            n.setNext(newNode);
-                        } else {
-                            n.setNext(new Node(clipboard.getComponent(), n.getNext()));
-                        }
-                        createProgramViewFromNode(d.getHead());
-                    } else {
-                        AlertBox.info("Inception detected", "You cannot place a block within itself", Alert.AlertType.ERROR);
-                    }
+                    Node newNode = clipboard;
+                    boolean b = targetFirstMap.get(target);
+                    insertNodeReletiveToNode(n, newNode, b);
                 }
             }
         });
@@ -273,7 +264,7 @@ public class Flowduino extends Application {
                 if (event.getGestureSource() != this &&
                         event.getDragboard().hasString()) {
                     /* allow for both copying and moving, whatever user chooses */
-                    event.acceptTransferModes(TransferMode.COPY);
+                    event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                 }
 
                 event.consume();
@@ -344,14 +335,22 @@ public class Flowduino extends Application {
                     cases.add(new Case(new Variable("i", "int"), new Constant(4), ">="));
                     IfComponent ifComponent = new IfComponent(nodes, cases);
                     newComponent = ifComponent;
+                } else if (db.getString().equals("NodeMove")) {
+                    if (insertNodeReletiveToNode(n, nodeToMove, b)) {
+                        deleteNodeFromTree(nodeToMove);
+                        nodeToMove = null;
+                    }
                 }
-                if (b) {
-                    Node newNode = new Node(n.getComponent(), n.getNext());
-                    n.setComponent(newComponent);
-                    n.setNext(newNode);
-                } else {
-                    n.setNext(new Node(newComponent, n.getNext()));
+                if (newComponent != null) {
+                    if (b) {
+                        Node newNode = new Node(n.getComponent(), n.getNext());
+                        n.setComponent(newComponent);
+                        n.setNext(newNode);
+                    } else {
+                        n.setNext(new Node(newComponent, n.getNext()));
+                    }
                 }
+
 
                 createProgramViewFromNode(d.getHead());
             }
@@ -705,6 +704,21 @@ public class Flowduino extends Application {
                 }
             }
         });
+        p.setOnDragDetected(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                Dragboard db = p.startDragAndDrop(TransferMode.MOVE);
+
+                        /* put a string on dragboard */
+                ClipboardContent content = new ClipboardContent();
+                content.putString("NodeMove");
+                db.setContent(content);
+
+                nodeToMove = n;
+
+                mouseEvent.consume();
+            }
+        });
         p.getStyleClass().add(blocktype);
         p.getStyleClass().add("block-image");
         programView.getChildren().add(p);
@@ -719,5 +733,22 @@ public class Flowduino extends Application {
             n.setNext(null);
         }
         createProgramViewFromNode(d.getHead());
+    }
+
+    public boolean insertNodeReletiveToNode(Node n, Node newNodeToInsert, boolean before) {
+        if (n == newNodeToInsert || !newNodeToInsert.isNodeSubNode(n)) {
+            if (before) {
+                Node newNode = new Node(n.getComponent(), n.getNext());
+                n.setComponent(newNodeToInsert.getComponent());
+                n.setNext(newNode);
+            } else {
+                n.setNext(new Node(newNodeToInsert.getComponent(), n.getNext()));
+            }
+            createProgramViewFromNode(d.getHead());
+            return true;
+        } else {
+            AlertBox.info("Inception detected", "You cannot place a block within itself", Alert.AlertType.ERROR);
+            return false;
+        }
     }
 }
