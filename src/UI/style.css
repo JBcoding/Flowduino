@@ -17,6 +17,11 @@
     -fx-background-color: #3c3f41;
     -fx-text-fill: #b3bab5;
 }
+
+.tree-cell:hover {
+    -fx-background-color: #373a3c;
+}
+
 .tree-cell > .tree-disclosure-node > .arrow {
     -fx-background-color: #acacac;
 }
@@ -47,6 +52,10 @@
     -fx-cursor: hand;
 }
 
+.buttons:hover {
+    -fx-background-color: #36393b;
+}
+
 #icon-menu {
     -fx-pref-width: 600px;
     -fx-pref-height: 30px;
@@ -59,7 +68,7 @@
     -fx-pref-height: 29px;
     -fx-border-width: 0;
     -fx-border-color: transparent;
-    -fx-background-size: 25px 25px;
+    -fx-background-size: 15px 15px;
     -fx-background-position: center;
     -fx-background-repeat: no-repeat;
     -fx-background-color: #555c57;
@@ -86,6 +95,7 @@
 
 .icon-menu-button:hover {
     -fx-opacity: .8;
+    -fx-background-size: 25px 25px;
 }
 
 .scroll-bar {
@@ -197,4 +207,23 @@
 
 .block-image {
     -fx-background-size: stretch;
+}
+
+.variable-name-box, .variable-value-box, .variable-type-combobox {
+    -fx-pref-width: 155px;
+}
+
+.variable-menu-pane {
+    -fx-background: #1d2022;
+    -fx-fit-to-width: true;
+    -fx-border-width: 0;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}
+.variable-menu-root {
+    -fx-background-color: #1d2022;
+}
+
+.variable-delete-button {
+    -fx-pref-width: 35px;
 }

@@ -1,14 +1,18 @@
 import javafx.application.Application;
 import javafx.event.*;
+import javafx.event.ActionEvent;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.*;
@@ -20,6 +24,7 @@ import javafx.beans.value.*;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
+import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +47,7 @@ public class Flowduino extends Application {
     protected Pane programView;
     protected ScrollPane scrollPane;
     protected Stage stage;
+    protected VariablesMenu variablesMenu;
 
     protected Node clipboard;
 
@@ -176,6 +182,9 @@ public class Flowduino extends Application {
         stage.getIcons().add(new Image("file:images/save.png"));
         stage.show();
 
+
+
+
         scene.setOnKeyPressed((KeyEvent evt)->{
             if ((evt.isControlDown() || evt.isMetaDown())//meta for Mac
                     && evt.getCode() == KeyCode.O){
@@ -195,7 +204,9 @@ public class Flowduino extends Application {
                 if (d.getHead().getComponent() != null && !d.getSavedSinceLastChange()) {
                     switch (AlertBox.show("Confirm quitting", "Save before exiting?", "")) {
                         case BUTTON_OK:
-                            saveFile();
+                             if (!saveFile()) {
+                                 ev.consume();
+                             }
                             break;
                         case BUTTON_NO:
                             break;
@@ -365,7 +376,7 @@ public class Flowduino extends Application {
 
     private int targetWidth = 100;
     private int targetHeight = 25;
-    private int blockHeight = 50;
+    private int blockHeight = 75;
     private int xSpaceBetweenTargets = 50;
     public void createProgramViewFromNode(Node n) {
         TreeView<String> treeView = null;
@@ -540,6 +551,17 @@ public class Flowduino extends Application {
         buttonBox.setId("button-box");
         Button buttonSettings = new Button("Settings");
         Button buttonVariables = new Button("Variables");
+        buttonVariables.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (!VariablesMenu.running) {
+                    variablesMenu = new VariablesMenu(d.getVariables());
+                    variablesMenu.show();
+                } else {
+                    variablesMenu.getScene().getWindow().requestFocus();
+                }
+            }
+        });
         Button buttonObjects = new Button("Connections");
         buttonSettings.getStyleClass().add("buttons");
         buttonVariables.getStyleClass().add("buttons");
@@ -625,10 +647,7 @@ public class Flowduino extends Application {
         if (!d.getSavedSinceLastChange()) {
             switch (AlertBox.show(title, message, "")) {
                 case BUTTON_OK:
-                    if (!saveFile()) {
-                        return false;
-                    }
-                    return true;
+                    return saveFile();
                 case BUTTON_NO:
                     return true;
                 case BUTTON_CANCEL:

@@ -1,5 +1,3 @@
-import sun.jvm.hotspot.memory.Generation;
-
 import java.awt.datatransfer.Clipboard;
 
 /**
