@@ -25,4 +25,9 @@ public class Constant implements IValues {
     public ICase clone() {
         return new Constant(new String(value));
     }
+
+    @Override
+    public String toString() {
+        return value;
+    }
 }

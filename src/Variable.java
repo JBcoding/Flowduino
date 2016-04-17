@@ -7,6 +7,10 @@ public class Variable implements IValues {
     protected String type;
     protected String startValue;
 
+    public Variable(String name) {
+        this.name = name;
+    }
+
     public Variable(String name, String type) throws IllegalArgumentException {
         if (name == null) {
             throw new IllegalArgumentException("Name cannot be null");
@@ -81,5 +85,21 @@ public class Variable implements IValues {
     @Override
     public ICase clone() {
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (other.getClass() == String.class) {
+            return name.equals(other);
+        }
+        return name.equals(((Variable)other).name);
     }
 }

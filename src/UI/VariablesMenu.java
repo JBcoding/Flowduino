@@ -25,8 +25,7 @@ import java.util.List;
 /**
  * Created by mathias on 27/03/16
  */
-public class VariablesMenu extends Stage {
-    static public boolean running = false;
+public class VariablesMenu extends Menu {
     private Scene scene;
     private AnchorPane root;
     ScrollPane scrollPane;

@@ -47,7 +47,7 @@ public class Flowduino extends Application {
     protected Pane programView;
     protected ScrollPane scrollPane;
     protected Stage stage;
-    protected VariablesMenu variablesMenu;
+    protected Menu openMenu;
 
     protected Node clipboard;
     protected Node toMove;
@@ -71,7 +71,18 @@ public class Flowduino extends Application {
         scene.getStylesheets().add("style.css");
         scene.setFill(Color.valueOf("#3c3f41"));
 
-
+        stage.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean t, Boolean t1) {
+                if (t1) {
+                    if (openMenu.running) {
+                        openMenu.getScene().getWindow().requestFocus();
+                    } else {
+                        createProgramViewFromNode(d.getHead());
+                    }
+                }
+            }
+        });
 
         final ContextMenu contextMenu = new ContextMenu();
         MenuItem cut = new MenuItem("Cut");
@@ -317,6 +328,7 @@ public class Flowduino extends Application {
                 IComponent newComponent = null;
                 if (db.getString().equals("Commonly used - Delay")) {
                     newComponent = new DelayComponent();
+                    ((DelayComponent)newComponent).setDelaySeconds(1);
                 } else if (db.getString().equals("Commonly used - Break")) {
                     newComponent = new BreakComponent();
                 } else if (db.getString().equals("Commonly used - Statement")) {
@@ -526,7 +538,7 @@ public class Flowduino extends Application {
                 treeCell.setOnDragDetected(new EventHandler<MouseEvent>() {
                     @Override
                     public void handle(MouseEvent mouseEvent) {
-                        if (treeCell.getTreeItem().isLeaf()) {
+                        if (treeCell.getTreeItem().isLeaf() && !openMenu.running) {
                             /* drag was detected, start drag-and-drop gesture*/
 
                             /* allow any transfer mode */
@@ -556,11 +568,11 @@ public class Flowduino extends Application {
         buttonVariables.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (!VariablesMenu.running) {
-                    variablesMenu = new VariablesMenu(d.getVariables());
-                    variablesMenu.show();
+                if (!openMenu.running) {
+                    openMenu = new VariablesMenu(d.getVariables());
+                    openMenu.show();
                 } else {
-                    variablesMenu.getScene().getWindow().requestFocus();
+                    openMenu.getScene().getWindow().requestFocus();
                 }
             }
         });
@@ -702,13 +714,33 @@ public class Flowduino extends Application {
             @Override
             public void handle(MouseEvent event) {
                 if (event.isSecondaryButtonDown()) {
+                    if (openMenu.running) {
+                        return;
+                    }
                     contextMenu.show(p, event.getScreenX(), event.getScreenY());
+                }
+            }
+        });
+        p.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (n.getComponent() != null && event.getButton() == MouseButton.PRIMARY) {
+                    if (n.getComponent().getClass() == DelayComponent.class) {
+                        OpenDelayMenu((DelayComponent) n.getComponent());
+                    } else if (n.getComponent().getClass() == StatementComponent.class) {
+                        OpenStatementMenu((StatementComponent) n.getComponent());
+                    } else if (n.getComponent().getClass() == IfComponent.class) {
+                        OpenIfMenu((IfComponent) n.getComponent());
+                    }
                 }
             }
         });
         p.setOnDragDetected(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
+                if (openMenu.running) {
+                    return;
+                }
                 Dragboard db = p.startDragAndDrop(TransferMode.MOVE);
 
                         /* put a string on dragboard */
@@ -791,5 +823,32 @@ public class Flowduino extends Application {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public void OpenDelayMenu(DelayComponent delay) {
+        if (!openMenu.running) {
+            openMenu = new DelayMenu(delay);
+            openMenu.show();
+        } else {
+            openMenu.getScene().getWindow().requestFocus();
+        }
+    }
+
+    public void OpenStatementMenu(StatementComponent statement) {
+        if (!openMenu.running) {
+            openMenu = new StatementMenu(statement);
+            openMenu.show();
+        } else {
+            openMenu.getScene().getWindow().requestFocus();
+        }
+    }
+
+    public void OpenIfMenu(IfComponent iff) {
+        if (!openMenu.running) {
+            openMenu = new IfMenu(iff, d.getVariables());
+            openMenu.show();
+        } else {
+            openMenu.getScene().getWindow().requestFocus();
+        }
     }
 }

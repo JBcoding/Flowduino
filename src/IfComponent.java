@@ -12,6 +12,10 @@ public class IfComponent extends ConditionalExecution {
         return cases;
     }
 
+    public void setCases(List<ICase> cases) {
+        this.cases = cases;
+    }
+
     @Override
     public String toCode(int tabDepth) {
         String code = "";
